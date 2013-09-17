@@ -27,21 +27,12 @@ public class HeightMap {
 	public HeightMap() throws Exception
 	{
 		try {
-			// Load the heightmap-image from its resource file
 			BufferedImage img = ImageIO.read(new File("res/heightmap.bmp"));
-			// Initialise the data array, which holds the heights of the heightmap-vertices, with the correct dimensions
 			data = new float[img.getWidth()][img.getHeight()];
-			// Lazily initialise the convenience class for extracting the separate red, green, blue, or alpha channels
-			// an int in the default RGB color model and default sRGB colourspace.
 			Color colour;
-			// Iterate over the pixels in the image on the x-axis
 			for (int z = 0; z < data.length; z++) {
-				// Iterate over the pixels in the image on the y-axis
 				for (int x = 0; x < data[z].length; x++) {
-					// Retrieve the colour at the current x-location and y-location in the image
 					colour = new Color(img.getRGB(z, x));
-					// Store the value of the red channel as the height of a heightmap-vertex in 'data'. The choice for
-					// the red channel is arbitrary, since the heightmap-image itself only has white, gray, and black.
 					data[z][x] = colour.getRed();
 				}
 			}
@@ -53,20 +44,14 @@ public class HeightMap {
 		}
 		
 		heightmapDisplayList = glGenLists(1);
-		// TODO: Add alternative VBO rendering for pseudo-compatibility with version 3 and higher.
 		glNewList(heightmapDisplayList, GL_COMPILE);
-		// Scale back the display list so that its proportions are acceptable.
 		glScalef(0.2f, 0.06f, 0.2f);
-		// Iterate over the 'strips' of heightmap data.
 		for (int z = 0; z < data.length - 1; z++) {
-			// Render a triangle strip for each 'strip'.
 			glBegin(GL_TRIANGLE_STRIP);
 			for (int x = 0; x < data[z].length; x++) {
 
 				GL11.glTexCoord2f(z/512.0f, x/512.0f);
-				// Take a vertex from the current strip
 				glVertex3f(x, data[z][x], z);
-				// Take a vertex from the next strip
 				glVertex3f(x, data[z + 1][x], z + 1);
 			}
 			glEnd();

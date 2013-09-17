@@ -134,13 +134,7 @@ public class Utils {
 		public URL getResource(String str);
 		public InputStream getResourceAsStream(String str);
 	}
-	/**
-	 * 计算三角形的面积Sabc=1/2|AB*AC|
-	 * @param a
-	 * @param b
-	 * @param c
-	 * @return
-	 */
+
 	public static float getArea(Vector3f a,Vector3f b,Vector3f c)
 	{
 		Vector3f ab=new Vector3f();
