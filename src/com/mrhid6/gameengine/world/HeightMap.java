@@ -14,6 +14,9 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -36,13 +39,13 @@ public class HeightMap {
 					data[z][x] = colour.getRed();
 				}
 			}
-			
+
 			data = smooth(data,img.getWidth(),img.getHeight(),1);
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		heightmapDisplayList = glGenLists(1);
 		glNewList(heightmapDisplayList, GL_COMPILE);
 		glScalef(0.2f, 0.06f, 0.2f);
@@ -57,6 +60,14 @@ public class HeightMap {
 			glEnd();
 		}
 		glEndList();
+	}
+
+	public float[][] getData() {
+		return data;
+	}
+
+	public float[] getHeightMap(){
+		return new float[1];
 	}
 
 	public float meanNeighbour(float [][] input, int w, int h, int x, int y) {
@@ -79,7 +90,7 @@ public class HeightMap {
 		GL11.glCallList(heightmapDisplayList);
 	}
 
-	public float [][] smooth(float [][] input,
+	public float[][] smooth(float [][] input,
 			int width, int height, int iterations){
 		float [][] temporary = new float [width][height];
 		float [][] outputArrays = new float [width][height];

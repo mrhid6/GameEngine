@@ -32,6 +32,7 @@ import org.lwjgl.util.glu.GLU;
 
 import com.mrhid6.gameengine.camera.CameraManager;
 import com.mrhid6.gameengine.render.RenderManager;
+import com.mrhid6.gameengine.shader.ShaderManager;
 import com.mrhid6.gameengine.world.WorldHeightMap;
 
 public class GameEngine {
@@ -112,7 +113,7 @@ public class GameEngine {
 	}
 
 	public void InitShaders() throws Exception{
-		//ShaderManager.Init();
+		ShaderManager.Init();
 	}
 	public void InitOpenGL(){
 		glViewport(0, 0, Settings.SIZE[0], Settings.SIZE[1]); // Reset The Current Viewport

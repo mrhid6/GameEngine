@@ -29,24 +29,15 @@ public class WorldHeightMap implements RenderObject{
 	private Texture tex0;
 	private Texture tex1;
 	private Texture mask;
+	private TerrainQuad terrain;
 
 	public WorldHeightMap() throws Exception {
 		map = new HeightMap();
 
 		tex0 = TextureLoader.loadTexture("res/heightmap.png");
-		tex1 = TextureLoader.loadTexture("res/dirt.png");
-		mask = TextureLoader.loadTexture("res/mask.png");
 		
-		//make GL_TEXTURE2 the active texture unit, then bind our mask texture
-		glActiveTexture(GL_TEXTURE2);
-		mask.bind();
-
-		//do the same for our other two texture units
-		glActiveTexture(GL_TEXTURE1);
-		tex1.bind();
-
-		glActiveTexture(GL_TEXTURE0);
-		tex0.bind();
+		terrain = new TerrainQuad("terrain", 65, 513, map.getHeightMap());
+		
 		RenderManager.addToManager(this);
 	}
 
