@@ -122,7 +122,7 @@ public class MainGameLoop {
 			camera.move();
 			
 			shader.start();
-			shader.loadviewMatrix(camera);
+			shader.loadViewMatrix(camera);
 			//render
 			renderer.render(entity, shader);
 			
