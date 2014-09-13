@@ -18,7 +18,13 @@
 		<link>
 			<name>res</name>
 			<type>2</type>
-			<location>C:/Users/Dominic/Documents/Game Dev/eclipse/GameEngine/res</location>
+			<locationURI>GAMEV2_RES</locationURI>
 		</link>
 	</linkedResources>
+	<variableList>
+		<variable>
+			<name>GAMEV2_RES</name>
+			<value>file:/J:/Game/GameEngine/res</value>
+		</variable>
+	</variableList>
 </projectDescription>
