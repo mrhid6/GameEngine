@@ -93,7 +93,7 @@ public class Loader {
 		
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
 		
-		FloatBuffer buffer = storeDataInFLoatBuffer(data);
+		FloatBuffer buffer = storeDataInFloatBuffer(data);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 		GL20.glVertexAttribPointer(attributeNumber, coordinateSize, GL11.GL_FLOAT, false, 0, 0);
 		
@@ -123,7 +123,7 @@ public class Loader {
 		return buffer;
 	}
 	
-	private FloatBuffer storeDataInFLoatBuffer(float[] data){
+	private FloatBuffer storeDataInFloatBuffer(float[] data){
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
 		
 		buffer.put(data);
