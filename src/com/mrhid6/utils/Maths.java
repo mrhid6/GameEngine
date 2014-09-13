@@ -7,6 +7,16 @@ import com.mrhid6.entities.Camera;
 
 public class Maths {
 	
+	/**
+	 * 
+	 * @param transformation - Transformation Vector3f
+	 * @param rx - Rotation X Float
+	 * @param ry - Rotation Y Float
+	 * @param rz - Rotation Z Float
+	 * @param scale - Scale Float
+	 * @return Matrix4f - Transformation Matrix
+	 */
+	
 	public static Matrix4f createTransformationMatrix(Vector3f transformation, float rx, float ry, float rz, float scale){
 		
 		Matrix4f matrix = new Matrix4f();
@@ -22,6 +32,11 @@ public class Maths {
 		
 		return matrix;
 	}
+	
+	/**
+	 * @param camera - Takes in Camera Object
+	 * @return Matrix4f
+	 */
 	
 	public static Matrix4f createViewMatrix(Camera camera){
 		

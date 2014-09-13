@@ -29,7 +29,9 @@ public class Renderer {
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.stop();
 	}
-	
+	/**
+	 * Prepares the screen for rendering
+	 */
 	public void perpare(){
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -62,6 +64,10 @@ public class Renderer {
 		GL30.glBindVertexArray(0);
 	}
 	
+	/**
+	 * Creates Projection Matrix
+	 * 
+	 */
 	private void createProjectionMatrix(){
 		float aspectRatio = (float) Display.getWidth() / (float) Display.getHeight();
 		float y_scale = (float) ((1f / Math.tan(Math.toRadians(FOV / 2f))) * aspectRatio);

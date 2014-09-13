@@ -23,6 +23,14 @@ public class Loader {
 	private List<Integer> vbos = new ArrayList<Integer>();
 	private List<Integer> textures = new ArrayList<Integer>();
 	
+	
+	/**
+	 * Creates a new RawModel object from raw data
+	 * @param positions - Vertex positions Float[]
+	 * @param textureCoords - Texture coords Float[] 
+	 * @param indices - Indices of vertex positions Int[]
+	 * @return New RawModel
+	 */
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
 		
 		int vaoID = createVAO();
@@ -34,6 +42,11 @@ public class Loader {
 		return new RawModel(vaoID, indices.length);
 	}
 	
+	/**
+	 * 
+	 * @param fileName - Texture File Location
+	 * @return Texture ID
+	 */
 	public int loadTexture(String fileName){
 		Texture texture = null;
 		try {
@@ -47,6 +60,9 @@ public class Loader {
 		return textureID;
 	}
 	
+	/**
+	 * Deletes all OpenGl Arrays and Textures
+	 */
 	public void cleanUp(){
 		for(int vao : vaos){
 			GL30.glDeleteVertexArrays(vao);
@@ -60,6 +76,8 @@ public class Loader {
 			GL11.glDeleteTextures(texture);
 		}
 	}
+	
+	
 	private int createVAO(){
 		int vaoID = GL30.glGenVertexArrays();
 		vaos.add(vaoID);
