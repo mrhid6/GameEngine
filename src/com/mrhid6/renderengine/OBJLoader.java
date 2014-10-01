@@ -17,7 +17,7 @@ public class OBJLoader {
 	public static RawModel loadObjModel(String fileName, Loader loader){
 		FileReader fr = null;
 		try {
-			fr = new FileReader(new File(fileName));
+			fr = new FileReader(new File("res/models/"+fileName+".obj"));
 			
 			
 		} catch (FileNotFoundException e) {
@@ -107,14 +107,14 @@ public class OBJLoader {
 			indicesArray[i] = indices.get(i);
 		}
 		
-		return loader.loadToVAO(vertexArray, textureArray, indicesArray);
+		return loader.loadToVAO(vertexArray, textureArray, normalsArray, indicesArray);
 	}
 	
 	private static void processVertex(String[] vertexData, List<Integer> indices, 
 			List<Vector2f> textures, List<Vector3f> normals, float[] textureArray, 
 			float[] normalsArray){
 		
-		int currentVertexPointer = Integer.parseInt(vertexData[0]) -1;
+		int currentVertexPointer = Integer.parseInt(vertexData[0]) - 1;
 		indices.add(currentVertexPointer);
 		
 		Vector2f currentTex = textures.get(Integer.parseInt(vertexData[1]) - 1 );

@@ -31,12 +31,13 @@ public class Loader {
 	 * @param indices - Indices of vertex positions Int[]
 	 * @return New RawModel
 	 */
-	public RawModel loadToVAO(float[] positions, float[] textureCoords, int[] indices){
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices){
 		
 		int vaoID = createVAO();
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
 		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
 		
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
@@ -50,7 +51,7 @@ public class Loader {
 	public int loadTexture(String fileName){
 		Texture texture = null;
 		try {
-			texture = TextureLoader.getTexture("PNG", new FileInputStream(fileName));
+			texture = TextureLoader.getTexture("PNG", new FileInputStream("res/textures/"+fileName+".png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

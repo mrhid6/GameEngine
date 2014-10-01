@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Entity;
+import com.mrhid6.entities.Light;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.models.TexturedModel;
 import com.mrhid6.renderengine.DisplayManager;
@@ -26,12 +27,15 @@ public class MainGameLoop {
 		
 		Renderer renderer = new Renderer(shader);
 		
-		RawModel model = OBJLoader.loadObjModel("res/models/human/Platformer.obj", loader);
+		RawModel model = OBJLoader.loadObjModel("dragon", loader);
+		TexturedModel texturedModel = new TexturedModel(model, new ModelTexture(loader.loadTexture("white")));
 		
-		ModelTexture texture = new ModelTexture(loader.loadTexture("res/models/human/test.png"));
-		TexturedModel texturedModel = new TexturedModel(model, texture);
+		ModelTexture texture = texturedModel.getTexture();
+		texture.setShineDamper(10);
+		texture.setReflectivity(0.5f);
 		
-		Entity entity = new Entity(texturedModel, new Vector3f(0, 0, -10), 0, 0, 0, 1);
+		Entity entity = new Entity(texturedModel, new Vector3f(0, -5, -20), 0, 0, 0, 1);
+		Light light = new Light(new Vector3f(0, 5, -15), new Vector3f(1, 1, 1));
 		
 		Camera camera = new Camera();
 		
@@ -44,6 +48,7 @@ public class MainGameLoop {
 			camera.move();
 			
 			shader.start();
+			shader.loadLight(light);
 			shader.loadViewMatrix(camera);
 			//render
 			renderer.render(entity, shader);

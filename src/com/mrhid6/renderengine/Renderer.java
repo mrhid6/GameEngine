@@ -11,6 +11,7 @@ import com.mrhid6.entities.Entity;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.models.TexturedModel;
 import com.mrhid6.shaders.StaticShader;
+import com.mrhid6.textures.ModelTexture;
 import com.mrhid6.utils.Maths;
 
 public class Renderer {
@@ -48,11 +49,15 @@ public class Renderer {
 		
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
+		GL20.glEnableVertexAttribArray(2);
 		
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), 
 				entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
 		
 		shader.loadTransformationMatrix(transformationMatrix);
+		ModelTexture texture = texturedModel.getTexture();
+		
+		shader.loadShineVaribles(texture.getShineDamper(), texture.getReflectivity());
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texturedModel.getTexture().getID());
@@ -60,6 +65,7 @@ public class Renderer {
 		
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(2);
 		
 		GL30.glBindVertexArray(0);
 	}
