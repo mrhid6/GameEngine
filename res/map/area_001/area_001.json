@@ -1,0 +1,6 @@
+{
+	"AreaName": "Goblin Village",
+	"Terrains": {
+		"terrain.0_0": "0_0/chunk.json"
+	}
+}

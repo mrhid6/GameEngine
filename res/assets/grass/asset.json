@@ -1,0 +1,11 @@
+{
+	"assetInfo": {
+        "assetName": "grass",
+        "modelFile": "grassModel.obj",
+        "textureFile": "grassTexture.png",
+		"isTransparent": true,
+		"hasFakeLighting": true,
+		"renderDistance": "200.0",
+		"height": "1"
+    }
+}

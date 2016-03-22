@@ -1,0 +1,11 @@
+{
+	"areaid": "1",
+	"gridX": "0",
+	"gridZ": "0",
+	"texture.base": "textures/dirt.png",
+	"texture.red": "textures/grass.png",
+	"texture.green": "textures/meadow.png",
+	"texture.blue": "textures/path.png",
+	"texture.splat": "splatmap.png",
+	"texture.height": "heightmap.png"
+}

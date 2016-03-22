@@ -2,20 +2,15 @@ package com.mrhid6.entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import com.mrhid6.models.TexturedModel;
-
 public class Entity {
-	
-	
-	private TexturedModel model;
+
 	private Vector3f position;
 	private float rotX,rotY,rotZ;
 	private float scale;
+	private boolean hasMoved = false;
 	
-	
-	public Entity(TexturedModel model, Vector3f position, float rotX, float rotY,
+	public Entity(Vector3f position, float rotX, float rotY,
 			float rotZ, float scale) {
-		this.model = model;
 		this.position = position;
 		this.rotX = rotX;
 		this.rotY = rotY;
@@ -24,9 +19,29 @@ public class Entity {
 	}
 	
 	public void increasePosition(float dx, float dy, float dz){
+		
+		float prevX = this.position.x;
+		float prevY = this.position.y;
+		float prevZ = this.position.z;
+		
 		this.position.x += dx;
 		this.position.y += dy;
 		this.position.z += dz;
+		
+		
+		float diffX = (prevX>position.x)?(prevX - position.x):(position.x-prevX);
+		float diffY = (prevY>position.y)?(prevY - position.y):(position.y-prevY);
+		float diffZ = (prevZ>position.z)?(prevZ - position.z):(position.z-prevZ);
+		
+		if(diffX > 0.005f || diffY > 0.005f || diffZ > 0.005f){
+			hasMoved = true;
+		}else{
+			hasMoved = false;
+		}
+	}
+	
+	public boolean hasMoved() {
+		return hasMoved;
 	}
 	
 	public void increaseRotation(float dx, float dy, float dz){
@@ -34,17 +49,6 @@ public class Entity {
 		this.rotY += dy;
 		this.rotZ += dz;
 	}
-
-
-	public TexturedModel getModel() {
-		return model;
-	}
-
-
-	public void setModel(TexturedModel model) {
-		this.model = model;
-	}
-
 
 	public Vector3f getPosition() {
 		return position;
