@@ -9,6 +9,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import com.mrhid6.asset.PlayerAsset;
@@ -20,8 +21,6 @@ import com.mrhid6.entities.Player;
 import com.mrhid6.entities.WorldObject;
 import com.mrhid6.models.TexturedModel;
 import com.mrhid6.shaders.StaticShader;
-import com.mrhid6.shaders.TerrianShader;
-import com.mrhid6.terrians.Terrain;
 import com.mrhid6.textures.GuiTexture;
 import com.mrhid6.water.WaterFrameBuffers;
 import com.mrhid6.water.WaterTile;
@@ -37,22 +36,20 @@ public class MasterRenderer {
 	
 	private StaticShader shader = new StaticShader();
 	
-	private EntityRenderer renderer;
+	private EntityRenderer entityRenderer;
 	private WorldObjectRenderer worldObjRenderer;
 	private GuiRenderer guiRenderer;
 	private TerrianRenderer terrianRenderer;
 	private SkyboxRenderer skyboxRenderer;
-	private TerrianShader terrianShader = new TerrianShader();
 
 	
-	public float RED=0.5444F;
-	public float GREEN=0.62f;
-	public float BLUE=0.69f;
+	public Vector3f skyColor = new Vector3f(0.5444f, 0.62f, 0.69f);
 	
 	private Map<TexturedModel,List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private Map<TexturedModel,List<WorldObject>> worldObjects = new HashMap<TexturedModel, List<WorldObject>>();
-	private List<Terrain> terrians = new ArrayList<Terrain>();
 	private ArrayList<GuiTexture> guis = new ArrayList<GuiTexture>();
+	
+	private ArrayList<Light> lights = new ArrayList<Light>();
 	
 	private static MasterRenderer instance;
 	
@@ -60,9 +57,10 @@ public class MasterRenderer {
 
 		enableCulling();
 		createProjectionMatrix();
-		renderer = new EntityRenderer(shader, projectionMatrix);
+		
+		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		worldObjRenderer = new WorldObjectRenderer(shader, projectionMatrix);
-		terrianRenderer = new TerrianRenderer(terrianShader, projectionMatrix);
+		terrianRenderer = new TerrianRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
 		
@@ -82,44 +80,43 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void render(List<Light> lights, Camera camera, Vector4f clipPlane){
+	public void render(Camera camera, Vector4f clipPlane){
 		
 		renderWaterFBO(lights, camera);
 		
-		render3d(lights, camera, clipPlane);
-		render2d(lights, camera);
+		render3d(camera, clipPlane);
+		render2d();
 		
-		terrians.clear();
 		entities.clear();
 		worldObjects.clear();
 		
 	}
 	
-	public void render3d(List<Light> lights, Camera camera, Vector4f clipPlane){
-		perpare();
+	public void render3d(Camera camera, Vector4f clipPlane){
+		prepare();
+		
 		shader.start();
 		shader.loadClipPlane(clipPlane);
-		shader.loadSkyColour(RED, GREEN, BLUE);
+		shader.loadSkyColour(skyColor);
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
-		renderer.render(entities);
+		entityRenderer.render(entities);
 		worldObjRenderer.render(worldObjects);
 		shader.stop();
 		
-		terrianShader.start();
-		terrianShader.loadClipPlane(clipPlane);
-		terrianShader.loadSkyColour(RED, GREEN, BLUE);
-		terrianShader.loadLights(lights);
-		terrianShader.loadViewMatrix(camera);
 		
-		terrianRenderer.render(terrians);
-		terrianShader.stop();
+		terrianRenderer.setClipPlane(clipPlane);
+		terrianRenderer.render();
 		
-		skyboxRenderer.render(camera, RED, GREEN, BLUE);
+		skyboxRenderer.render();
 		
 	}
 	
-	public void render2d(List<Light> lights, Camera camera){
+	public Vector3f getSkyColor() {
+		return skyColor;
+	}
+	
+	public void render2d(){
 		guiRenderer.render(guis);
 		
 		guis.clear();
@@ -135,13 +132,13 @@ public class MasterRenderer {
 		float distance = 2 * (camera.getPosition().y - waters.get(0).getPosition().getY());
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
-		render3d(lights, camera, new Vector4f(0, 1, 0, -waters.get(0).getPosition().getY()+1f));
+		render3d(camera, new Vector4f(0, 1, 0, -waters.get(0).getPosition().getY()+1f));
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 		
 		
 		waterFBOs.bindRefractionFrameBuffer();
-		render3d(lights, camera, new Vector4f(0, -1, 0, waters.get(0).getPosition().getY()+1f));
+		render3d(camera, new Vector4f(0, -1, 0, waters.get(0).getPosition().getY()+1f));
 		
 		waterFBOs.unbindCurrentFrameBuffer();
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
@@ -151,8 +148,12 @@ public class MasterRenderer {
 		guis.add(gui);
 	}
 	
-	public void processTerrian(Terrain terrian){
-		terrians.add(terrian);
+	public void addLight(Light light){
+		lights.add(light);
+	}
+	
+	public ArrayList<Light> getLights() {
+		return lights;
 	}
 	
 	public void processPlayer(Player player){
@@ -171,12 +172,6 @@ public class MasterRenderer {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	}
-	
-	public void setFogColour(float r, float g, float b){
-		this.RED = r;
-		this.GREEN = g;
-		this.BLUE = b;
 	}
 	
 	/*public void processEntity(Entity entity){
@@ -208,15 +203,15 @@ public class MasterRenderer {
 	
 	public void cleanUp(){
 		shader.cleanUp();
-		terrianShader.cleanUp();
 		skyboxRenderer.cleanUp();
+		terrianRenderer.cleanUp();
 		guiRenderer.cleanUp();
 	}
 	
-	public void perpare(){
+	public void prepare(){
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(RED, GREEN, BLUE, 1);
+		GL11.glClearColor(skyColor.x, skyColor.y, skyColor.z, 1);
 	}
 	
 	

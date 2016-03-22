@@ -350,12 +350,12 @@ public class Terrain {
         }
 	}
 	
-
+	
 	@Override
 	public String toString() {
-		return "Terrain [x=" + x + ", z=" + z + ", heightMap=" + heightMap + "]";
+		return "Terrain [x=" + x + ", z=" + z + ", gridX=" + gridX + ", gridZ=" + gridZ + ",  heightMap=" + heightMap + "]";
 	}
-	
+
 	public void setHeights(float[][] heights) {
 		this.heights = heights;
 	}

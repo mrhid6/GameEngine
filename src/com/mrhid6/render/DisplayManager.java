@@ -8,6 +8,8 @@ import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
+import com.mrhid6.log.Logger;
+
 public class DisplayManager {
 
 	public static final int WIDTH = 1360;
@@ -27,6 +29,7 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.create(new PixelFormat(4,4,4,4), attribs);
 			Display.setTitle(TITLE);
+			Logger.info("Display created.");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -48,6 +51,7 @@ public class DisplayManager {
 
 	public static void closeDisplay(){
 		Display.destroy();
+		Logger.info("Display destroyed.");
 	}
 	
 	private static long getCurrentTime(){

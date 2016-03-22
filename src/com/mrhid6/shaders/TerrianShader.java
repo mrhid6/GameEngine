@@ -83,8 +83,8 @@ public class TerrianShader extends ShaderProgram{
 		super.loadVector(location_plane, plane);
 	}
 	
-	public void loadSkyColour(float r, float g, float b){
-		super.loadVector(location_skyColour, new Vector3f(r, g, b));
+	public void loadSkyColour(Vector3f skyColour){
+		super.loadVector(location_skyColour, skyColour);
 	}
 	
 	public void loadShineVaribles(float damper, float reflectivity){

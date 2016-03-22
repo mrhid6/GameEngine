@@ -3,7 +3,7 @@ package com.mrhid6.mousetools;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
-import com.mrhid6.engineTester.MainGameLoop;
+import com.mrhid6.engine.GameEngine;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Maths;
@@ -39,7 +39,7 @@ public class BrushMouseTool extends MouseTool {
 
 
 	private void adjustTerrainHeight(float amount, int raduis){
-		MousePicker picker = MainGameLoop.getInstance().getPicker();
+		MousePicker picker = GameEngine.getInstance().getPicker();
 		Vector3f terrainPoint = picker.getCurrentTerrainPoint();
 		if(terrainPoint !=null){
 			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);

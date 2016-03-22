@@ -1,7 +1,5 @@
 package com.mrhid6.render.renderer;
 
-import java.util.List;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -9,18 +7,20 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.mrhid6.entities.Camera;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.shaders.TerrianShader;
 import com.mrhid6.terrians.Terrain;
+import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.textures.TerrianTexturePack;
 import com.mrhid6.utils.Maths;
 
-public class TerrianRenderer {
+public class TerrianRenderer extends SubRenderer{
 	
 	private TerrianShader shader;
 	
-	public TerrianRenderer(TerrianShader shader, Matrix4f projectionMatrix) {
-		this.shader = shader;
+	public TerrianRenderer(Matrix4f projectionMatrix) {
+		this.shader = new TerrianShader();
 		
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
@@ -28,15 +28,21 @@ public class TerrianRenderer {
 		shader.stop();
 	}
 	
-	public void render(List<Terrain> terrians){
+	public void render(){
 		
-		for(Terrain terrian: terrians){
+		shader.start();
+		shader.loadClipPlane(clipPlane);
+		shader.loadSkyColour(MasterRenderer.getInstance().getSkyColor());
+		shader.loadLights(MasterRenderer.getInstance().getLights());
+		shader.loadViewMatrix(Camera.getInstance());
+		
+		for(Terrain terrian: TerrainGrid.getInstance().getTerrians()){
 			prepareTerrian(terrian);
 			loadModelMatrix(terrian);
 			GL11.glDrawElements(GL11.GL_TRIANGLES, terrian.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 			unbindTextureModel();
 		}
-		
+		shader.stop();
 	}
 	
 	private void prepareTerrian(Terrain terrian){
@@ -82,6 +88,11 @@ public class TerrianRenderer {
 				new Vector3f(terrian.getX(), 0, terrian.getZ()), 0, 0, 0, 1);
 		
 		shader.loadTransformationMatrix(transformationMatrix);
+	}
+
+	@Override
+	public void cleanUp() {
+		shader.cleanUp();
 	}
 	
 }

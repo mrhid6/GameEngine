@@ -32,15 +32,6 @@ public class TerrainGrid {
 		terrians.add(t);
 	}
 	
-	public void processTerrians(){
-		MasterRenderer renderer = MasterRenderer.getInstance();
-		
-		for(int i=0;i<terrians.size();i++){
-			Terrain t = terrians.get(i);
-			renderer.processTerrian(t);
-		}
-	}
-	
 	public Terrain getTerrian(float x, float z){
 		for(int i=0;i<terrians.size();i++){
 			Terrain t = terrians.get(i);
@@ -58,5 +49,9 @@ public class TerrainGrid {
 			Terrain t = terrians.get(i);
 			t.saveTerrain();
 		}
+	}
+	
+	public ArrayList<Terrain> getTerrians() {
+		return terrians;
 	}
 }

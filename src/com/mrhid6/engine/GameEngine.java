@@ -1,7 +1,6 @@
-package com.mrhid6.engineTester;
+package com.mrhid6.engine;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import javax.naming.directory.InvalidAttributesException;
@@ -17,6 +16,7 @@ import com.mrhid6.entities.Light;
 import com.mrhid6.entities.Player;
 import com.mrhid6.entities.WorldObject;
 import com.mrhid6.guis.GuiManager;
+import com.mrhid6.log.Logger;
 import com.mrhid6.mousetools.MouseToolManager;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.render.renderer.MasterRenderer;
@@ -29,13 +29,13 @@ import com.mrhid6.water.WaterTile;
 import com.mrhid6.world.areas.GoblinVillage;
 import com.mrhid6io.utils.Input;
 
-public class MainGameLoop {
+public class GameEngine {
 
 	
-	private static MainGameLoop instance;
+	private static GameEngine instance;
 	
 	private Camera camera;
-	private List<Light> lights;
+
 	private MasterRenderer renderer;
 	private TerrainGrid terriangrid;
 	private Player player;
@@ -47,8 +47,8 @@ public class MainGameLoop {
 	
 	private MouseToolManager mouseManager;
 	
-	public MainGameLoop(){
-		
+	public GameEngine(){
+		Logger.info("GameEngine Initialized");
 		try{
 			
 			createDisplay();
@@ -78,7 +78,7 @@ public class MainGameLoop {
 		cleanUp();
 	}
 	
-	public static MainGameLoop getInstance() {
+	public static GameEngine getInstance() {
 		return instance;
 	}
 
@@ -99,10 +99,9 @@ public class MainGameLoop {
 		AssetLoader.staticWorldObjectAssetLoader.loadAsset("grass");
 		
 		Light sun = new Light(new Vector3f(0, 1000, -700f), new Vector3f(0.6F, 0.6F, 0.6F));
-		lights = new ArrayList<Light>();
-		lights.add(sun);
-		lights.add(new Light(new Vector3f(-200, 10, -200), new Vector3f(10, 0, 0), new Vector3f(1, 0.01F, 0.002F)));
-		lights.add(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
+		renderer.addLight(sun);
+		renderer.addLight(new Light(new Vector3f(-200, 10, -200), new Vector3f(10, 0, 0), new Vector3f(1, 0.01F, 0.002F)));
+		renderer.addLight(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
 		
 		guiManager = new GuiManager();
 		new GoblinVillage();
@@ -185,7 +184,6 @@ public class MainGameLoop {
 	
 	private void render(){
 		renderer.processPlayer(player);
-		terriangrid.processTerrians();
 		
 		for(WorldObject worldObj : worldObjs){
 			renderer.processWorldObject(worldObj);
@@ -194,24 +192,15 @@ public class MainGameLoop {
 		guiManager.processGuis();
 		
 		
-		renderer.render(lights, camera, new Vector4f(0, -1, 0, 10000000));
-		waterRenderer.render(camera, lights.get(0));
+		renderer.render(camera, new Vector4f(0, -1, 0, 10000000));
+		waterRenderer.render(camera, renderer.getLights().get(0));
 	}
 
 	public void cleanUp(){
-		Loader loader = Loader.getInstance();
 		waterRenderer.cleanUp();
 		renderer.cleanUp();
-		loader.cleanUp();
+		Loader.getInstance().cleanUp();
 		DisplayManager.closeDisplay();
-	}
-	
-	public List<Light> getLights() {
-		return lights;
-	}
-	
-	public static void main(String[] args) {
-		new MainGameLoop();
 	}
 	
 	
@@ -222,74 +211,5 @@ public class MainGameLoop {
 	public MousePicker getPicker() {
 		return picker;
 	}
-	
-	/*
-	public static void main(String[] args) {
-
-		new MainGameLoop();
-
-
-		
-		RawModel treeModel = loader.loadObjAsset("lowPolyTree");
-
-		RawModel playerRawModel = loader.loadObjAsset("person");
-
-		TexturedModel playerModel = new TexturedModel(playerRawModel, new ModelTexture(loader.loadTexture("playerTexture")));
-
-
-
-
-
-		Terrian terrian = new Terrian(0, -1, loader, texturePack, blendMap, "heightmap");
-
-
-		TexturedModel tree = ModelUtils.createTexturedModel("tree");
-		TexturedModel tree1 = ModelUtils.createTexturedModel("lowPolyTree");
-		TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader), new ModelTexture(loader.loadTexture("grassTexture")));
-
-		grass.getTexture().setHasTransparency(true);
-		grass.getTexture().setUseFakeLighting(true);
-
-		TexturedModel fern = ModelUtils.createTexturedModel("fern");
-		fern.getTexture().setHasTransparency(true);
-
-		List<Entity>entities = new ArrayList<Entity>();
-
-		Random rand = new Random();
-
-		for(int i=0;i < 200;i++){
-
-			if(i % 20 == 0){
-
-				float x = rand.nextFloat() * 800 - 400;
-				float z = rand.nextFloat() * -600;
-				float y = terrian.getHeightOfTerrian(x, z);
-				entities.add(new Entity(tree, new Vector3f(x, y, z), 0, 0, 0, 10));
-			}
-
-			if(i % 5 == 0){
-
-				float x = rand.nextFloat() * 800 - 400;
-				float z = rand.nextFloat() * -600;
-				float y = terrian.getHeightOfTerrian(x, z);
-				entities.add(new Entity(tree1, new Vector3f(x, y, z), 0, 0, 0, 1.5f));
-
-				x = rand.nextFloat() * 800 - 400;
-				z = rand.nextFloat() * -600;
-				y = terrian.getHeightOfTerrian(x, z);
-				entities.add(new Entity(grass, new Vector3f(x, y, z), 0, 0, 0, 2));
-			}
-
-			if(i % 10 == 0){
-
-				float x = rand.nextFloat() * 800 - 400;
-				float z = rand.nextFloat() * -600;
-				float y = terrian.getHeightOfTerrian(x, z);
-				entities.add(new Entity(fern, new Vector3f(x, y, z), 0, 0, 0, 1));
-			}
-		}
-
-		
-	}*/
 
 }
