@@ -8,7 +8,7 @@ import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
 
-public abstract class WorldArea {
+public class WorldArea {
 	
 	private int areaID = -1;
 	private String areaName = "";
@@ -18,6 +18,9 @@ public abstract class WorldArea {
 	public WorldArea(int areaID) {
 		this.areaID = areaID;
 		
+	}
+	
+	public void initialize(){
 		loadAreaConfig();
 	}
 	
@@ -60,7 +63,7 @@ public abstract class WorldArea {
 		}
 	}
 	
-	protected String getAreaURL(){
+	public String getAreaURL(){
 		return getAreaURL(areaID);
 	}
 	

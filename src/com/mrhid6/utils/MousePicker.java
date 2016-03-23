@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import com.mrhid6.entities.Camera;
+import com.mrhid6.render.renderer.MasterRenderer;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
 
@@ -20,14 +21,14 @@ public class MousePicker {
 
 	private Matrix4f projectionMatrix;
 	private Matrix4f viewMatrix;
-	private Camera camera;
 	
 	private Vector3f currentTerrainPoint;
 
-	public MousePicker(Camera cam, Matrix4f projection) {
-		camera = cam;
-		projectionMatrix = projection;
-		viewMatrix = Maths.createViewMatrix(camera);
+	public MousePicker() {}
+	
+	public void initialize(){
+		projectionMatrix = MasterRenderer.getInstance().getProjectionMatrix();
+		viewMatrix = Maths.createViewMatrix(Camera.getInstance());
 	}
 	
 	public Vector3f getCurrentTerrainPoint() {
@@ -39,7 +40,7 @@ public class MousePicker {
 	}
 
 	public void update() {
-		viewMatrix = Maths.createViewMatrix(camera);
+		viewMatrix = Maths.createViewMatrix(Camera.getInstance());
 		currentRay = calculateMouseRay();
 		if (intersectionInRange(0, RAY_RANGE, currentRay)) {
 			currentTerrainPoint = binarySearch(0, 0, RAY_RANGE, currentRay);
@@ -81,7 +82,7 @@ public class MousePicker {
 	//**********************************************************
 	
 	private Vector3f getPointOnRay(Vector3f ray, float distance) {
-		Vector3f camPos = camera.getPosition();
+		Vector3f camPos = Camera.getInstance().getPosition();
 		Vector3f start = new Vector3f(camPos.x, camPos.y, camPos.z);
 		Vector3f scaledRay = new Vector3f(ray.x * distance, ray.y * distance, ray.z * distance);
 		return Vector3f.add(start, scaledRay, null);

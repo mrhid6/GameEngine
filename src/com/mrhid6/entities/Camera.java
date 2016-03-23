@@ -4,6 +4,9 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.render.DisplayManager;
+import com.mrhid6.terrians.Terrain;
+import com.mrhid6.terrians.TerrainGrid;
+import com.mrhid6.utils.Maths;
 
 public class Camera {
 	private final float MINZOOM=26;
@@ -27,6 +30,7 @@ public class Camera {
 
 	public Camera(Player player) {
 		this.player = player;
+		instance = this;
 	}
 
 	public void move(){
@@ -36,6 +40,7 @@ public class Camera {
 		calculateAngleAroundPlayer();
 		animateAngle();
 
+		
 		float horizontalDistance = calculateHorizontalDistance();
 		float verticalDistance = calculateVerticalDistance();
 
@@ -47,7 +52,6 @@ public class Camera {
 			resetAngle = true;
 		}
 		
-		instance = this;
 	}
 	
 	public void invertPitch(){

@@ -1,7 +1,5 @@
 package com.mrhid6.entities;
 
-import javax.naming.directory.InvalidAttributesException;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -30,7 +28,7 @@ public class Player extends Entity{
 	
 	private PlayerAsset playerAsset;
 	
-	public Player( Vector3f position, float rotX, float rotY, float rotZ, float scale) throws InvalidAttributesException {
+	public Player( Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(position, rotX, rotY, rotZ, scale);
 		
 		PlayerAssetLoader.loadAsset("player");
@@ -38,8 +36,6 @@ public class Player extends Entity{
 		
 		if(pa instanceof PlayerAsset){
 			setAsset((PlayerAsset)pa);
-		}else{
-			throw new InvalidAttributesException();
 		}
 		
 	}

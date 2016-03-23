@@ -8,7 +8,6 @@ public class Asset {
 		this.assetName = assetName;
 	}
 
-
 	public String getAssetName() {
 		return assetName;
 	}
