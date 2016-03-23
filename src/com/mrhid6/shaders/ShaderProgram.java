@@ -13,6 +13,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import com.mrhid6.log.Logger;
+
 public abstract class ShaderProgram {
 
 	private int programID;
@@ -55,7 +57,8 @@ public abstract class ShaderProgram {
 
 	public void cleanUp(){
 		stop();
-
+		
+		Logger.info("CleanUp Started");
 		GL20.glDetachShader(programID, vertexShaderID);
 		GL20.glDetachShader(programID, fragmentShaderID);
 
@@ -63,6 +66,7 @@ public abstract class ShaderProgram {
 		GL20.glDeleteShader(fragmentShaderID);
 
 		GL20.glDeleteProgram(programID);
+		Logger.info("CleanUp Finished");
 	}
 
 	protected abstract void bindAttributes();

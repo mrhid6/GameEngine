@@ -10,7 +10,7 @@ import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Light;
 import com.mrhid6.utils.Maths;
 
-public class TerrianShader extends ShaderProgram{
+public class TerrainShader extends ShaderProgram{
 	
 	private static final int MAX_LIGHTS = 4;
 
@@ -34,7 +34,7 @@ public class TerrianShader extends ShaderProgram{
 	private int location_plane;
 	
 	
-	public TerrianShader() {
+	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
 

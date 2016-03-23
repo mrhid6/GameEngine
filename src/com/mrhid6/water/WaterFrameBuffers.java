@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
+import com.mrhid6.log.Logger;
 import com.mrhid6.render.DisplayManager;
 
 public class WaterFrameBuffers {
@@ -31,13 +32,15 @@ public class WaterFrameBuffers {
 		initialiseRefractionFrameBuffer();
 	}
 
-	public void cleanUp() {//call when closing the game
+	public void cleanUp() {
+		Logger.info("CleanUp Started");
 		GL30.glDeleteFramebuffers(reflectionFrameBuffer);
 		GL11.glDeleteTextures(reflectionTexture);
 		GL30.glDeleteRenderbuffers(reflectionDepthBuffer);
 		GL30.glDeleteFramebuffers(refractionFrameBuffer);
 		GL11.glDeleteTextures(refractionTexture);
 		GL11.glDeleteTextures(refractionDepthTexture);
+		Logger.info("CleanUp Finished");
 	}
 
 	public void bindReflectionFrameBuffer() {//call before rendering to this FBO

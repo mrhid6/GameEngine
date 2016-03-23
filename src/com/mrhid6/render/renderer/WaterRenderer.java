@@ -10,6 +10,7 @@ import org.lwjgl.util.vector.Matrix4f;
 
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Light;
+import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.shaders.WaterShader;
@@ -48,8 +49,9 @@ public class WaterRenderer {
 		instance = this;
 	}
 
-	public void render(Camera camera, Light sun) {
-		prepareRender(camera, sun);
+	public void render(Light sun) {
+		
+		prepareRender(sun);
 		for (WaterTile tile : waters) {
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(tile.getPosition(),tile.getScale());
 			shader.loadModelMatrix(modelMatrix);
@@ -58,7 +60,8 @@ public class WaterRenderer {
 		unbind();
 	}
 	
-	private void prepareRender(Camera camera, Light sun){
+	private void prepareRender(Light sun){
+		Camera camera = Camera.getInstance();
 		shader.start();
 		shader.loadViewMatrix(camera);
 		moveFactor += WAVE_SPEED * DisplayManager.getFrameTimeSecond();
@@ -110,8 +113,10 @@ public class WaterRenderer {
 	}
 
 	public void cleanUp() {
+		Logger.info("CleanUp Started");
 		shader.cleanUp();
 		waterFBOs.cleanUp();
+		Logger.info("CleanUp Finished");
 	}
 	
 	public void processWater(WaterTile water){

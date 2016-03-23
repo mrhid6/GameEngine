@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
-import com.mrhid6.textures.ModelTexture;
+import com.mrhid6.log.Logger;
 import com.mrhid6.utils.Loader;
 
 public class AssetLoader {
@@ -19,13 +19,9 @@ public class AssetLoader {
 		assets.put(asset.getAssetName(), asset);
 	}
 	
-	public static void debug(String text){
-		System.out.println(text);
-	}
-	
 	public static JSONObject loadAssetConfig(String configPath){
 		
-		debug("Loading Asset From: "+configPath);
+		Logger.info("Loading Asset From: "+configPath);
 		
 		try{
 			
@@ -43,12 +39,6 @@ public class AssetLoader {
 		}
 		
 		return null;
-		
-		/*JSONArray arr = obj.getJSONArray("posts");
-		for (int i = 0; i < arr.length(); i++)
-		{
-		    String post_id = arr.getJSONObject(i).getString("post_id");
-		}*/
 	}
 	
 	public static boolean assetExists(String assetName){
@@ -69,78 +59,6 @@ public class AssetLoader {
 		}
 		
 		return null;
-	}
-	public static class playerAssetLoader{
-		
-		public static void loadAsset(String assetName){
-			Loader loader = Loader.getInstance();
-			
-			String assetlocation = AssetLoader.ASSETSLOCATION + "/" + assetName;
-			JSONObject assetconfig = AssetLoader.loadAssetConfig(assetlocation + "/asset.json");
-			
-			if(assetconfig != null){
-				
-				String assetInfoName = assetconfig.getString("assetName");
-				PlayerAsset playerAsset = new PlayerAsset(assetInfoName);
-				
-				String modelFile = assetconfig.getString("modelFile");
-				playerAsset.setModel(loader.loadObjAsset(assetlocation + "/" + modelFile));
-				
-				String textureFile = assetconfig.getString("textureFile");
-				
-				ModelTexture texture = new ModelTexture(loader.loadTexture(assetlocation + "/" + textureFile));
-				
-				playerAsset.setTexture(texture);
-				
-				AssetLoader.addAsset(playerAsset);
-				
-				AssetLoader.debug("Asset Loaded " + assetName);
-				
-			}else{
-				AssetLoader.debug("Asset Exisits Skipped load");
-			}
-		}
-	}
-	public static class staticWorldObjectAssetLoader{
-		
-		public static void loadAsset(String assetName){
-			Loader loader = Loader.getInstance();
-			
-			String assetlocation = AssetLoader.ASSETSLOCATION + "/" + assetName;
-			JSONObject assetconfig = AssetLoader.loadAssetConfig(assetlocation + "/asset.json");
-			
-			if(assetconfig != null){
-				
-				String assetInfoName = assetconfig.getString("assetName");
-				StaticWorldObjectAsset worldObj = new StaticWorldObjectAsset(assetInfoName);
-				
-				String modelFile = assetconfig.getString("modelFile");
-				worldObj.setModel(loader.loadObjAsset(assetlocation + "/" + modelFile));
-				
-				String textureFile = assetconfig.getString("textureFile");
-				
-				boolean isTransparent = assetconfig.getBoolean("isTransparent");
-				boolean hasFakeLighting = assetconfig.getBoolean("hasFakeLighting");
-				float renderDistance = Float.parseFloat(assetconfig.getString("renderDistance"));
-				float height = Float.parseFloat(assetconfig.getString("height"));
-				
-				ModelTexture texture = new ModelTexture(loader.loadTexture(assetlocation + "/" + textureFile));
-				texture.setHasTransparency(isTransparent);
-				texture.setUseFakeLighting(hasFakeLighting);
-				
-				worldObj.setTexture(texture);
-				worldObj.setRenderDistance(renderDistance);
-				worldObj.setHeight(height);
-				AssetLoader.addAsset(worldObj);
-				
-				AssetLoader.debug("Asset Loaded " + assetName);
-				
-			}else{
-				AssetLoader.debug("Asset Exisits");
-			}
-			
-		}
-		
 	}
 	
 }

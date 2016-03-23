@@ -29,7 +29,7 @@ public class DisplayManager {
 			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
 			Display.create(new PixelFormat(4,4,4,4), attribs);
 			Display.setTitle(TITLE);
-			Logger.info("Display created.");
+			Logger.info("Display Created");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -51,7 +51,7 @@ public class DisplayManager {
 
 	public static void closeDisplay(){
 		Display.destroy();
-		Logger.info("Display destroyed.");
+		Logger.info("Display Destroyed");
 	}
 	
 	private static long getCurrentTime(){

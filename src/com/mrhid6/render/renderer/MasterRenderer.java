@@ -39,7 +39,7 @@ public class MasterRenderer {
 	private EntityRenderer entityRenderer;
 	private WorldObjectRenderer worldObjRenderer;
 	private GuiRenderer guiRenderer;
-	private TerrianRenderer terrianRenderer;
+	private TerrainRenderer terrianRenderer;
 	private SkyboxRenderer skyboxRenderer;
 
 	
@@ -60,7 +60,7 @@ public class MasterRenderer {
 		
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		worldObjRenderer = new WorldObjectRenderer(shader, projectionMatrix);
-		terrianRenderer = new TerrianRenderer(projectionMatrix);
+		terrianRenderer = new TerrainRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
 		
@@ -80,11 +80,11 @@ public class MasterRenderer {
 		GL11.glDisable(GL11.GL_CULL_FACE);
 	}
 	
-	public void render(Camera camera, Vector4f clipPlane){
+	public void render(Vector4f clipPlane){
 		
-		renderWaterFBO(lights, camera);
+		renderWaterFBO();
 		
-		render3d(camera, clipPlane);
+		render3d(clipPlane);
 		render2d();
 		
 		entities.clear();
@@ -92,8 +92,10 @@ public class MasterRenderer {
 		
 	}
 	
-	public void render3d(Camera camera, Vector4f clipPlane){
+	public void render3d(Vector4f clipPlane){
 		prepare();
+		
+		Camera camera = Camera.getInstance();
 		
 		shader.start();
 		shader.loadClipPlane(clipPlane);
@@ -122,8 +124,9 @@ public class MasterRenderer {
 		guis.clear();
 	}
 	
-	public void renderWaterFBO(List<Light> lights, Camera camera){
+	public void renderWaterFBO(){
 		
+		Camera camera = Camera.getInstance();
 		WaterFrameBuffers waterFBOs = WaterRenderer.getInstance().getWaterFBOs();
 		ArrayList<WaterTile> waters = WaterRenderer.getInstance().getWaters();
 		
@@ -132,13 +135,13 @@ public class MasterRenderer {
 		float distance = 2 * (camera.getPosition().y - waters.get(0).getPosition().getY());
 		camera.getPosition().y -= distance;
 		camera.invertPitch();
-		render3d(camera, new Vector4f(0, 1, 0, -waters.get(0).getPosition().getY()+1f));
+		render3d(new Vector4f(0, 1, 0, -waters.get(0).getPosition().getY()+1f));
 		camera.getPosition().y += distance;
 		camera.invertPitch();
 		
 		
 		waterFBOs.bindRefractionFrameBuffer();
-		render3d(camera, new Vector4f(0, -1, 0, waters.get(0).getPosition().getY()+1f));
+		render3d(new Vector4f(0, -1, 0, waters.get(0).getPosition().getY()+1f));
 		
 		waterFBOs.unbindCurrentFrameBuffer();
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);

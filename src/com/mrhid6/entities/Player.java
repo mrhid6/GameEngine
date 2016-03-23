@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Vector3f;
 import com.mrhid6.asset.Asset;
 import com.mrhid6.asset.AssetLoader;
 import com.mrhid6.asset.PlayerAsset;
+import com.mrhid6.asset.loader.PlayerAssetLoader;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
@@ -32,7 +33,7 @@ public class Player extends Entity{
 	public Player( Vector3f position, float rotX, float rotY, float rotZ, float scale) throws InvalidAttributesException {
 		super(position, rotX, rotY, rotZ, scale);
 		
-		AssetLoader.playerAssetLoader.loadAsset("player");
+		PlayerAssetLoader.loadAsset("player");
 		Asset pa = AssetLoader.getAsset("player");
 		
 		if(pa instanceof PlayerAsset){

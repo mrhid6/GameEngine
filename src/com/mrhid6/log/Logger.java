@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import com.mrhid6io.utils.Utils;
 
@@ -19,11 +21,13 @@ public class Logger {
 	}
 	
 	public static void info(String log_message){
-		log(LogType.INFO, log_message);
+		String className = new Exception().getStackTrace()[1].getClassName();
+		log(className, LogType.INFO, log_message);
 	}
 	
-	public static void log(LogType type, String log_message){
-		String msg_prefix = type.getTypeName()+" - ";
+	private static void log(String className, LogType type, String log_message){
+		String timeStamp = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Calendar.getInstance().getTime());
+		String msg_prefix = timeStamp+" - "+type.getTypeName()+" - ["+className+"] - ";
 		
 		String dataToWrite = msg_prefix + log_message;
 		writeToFile(dataToWrite);

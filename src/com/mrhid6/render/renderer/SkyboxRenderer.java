@@ -7,6 +7,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
 import com.mrhid6.entities.Camera;
+import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.shaders.SkyboxShader;
@@ -121,6 +122,8 @@ public class SkyboxRenderer {
 	}
 
 	public void cleanUp(){
+		Logger.info("CleanUp Started");
 		shader.cleanUp();
+		Logger.info("CleanUp Finished");
 	}
 }

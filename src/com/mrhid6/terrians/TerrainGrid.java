@@ -2,8 +2,6 @@ package com.mrhid6.terrians;
 
 import java.util.ArrayList;
 
-import com.mrhid6.render.renderer.MasterRenderer;
-
 public class TerrainGrid {
 	
 	
@@ -22,7 +20,6 @@ public class TerrainGrid {
 			t.generateTerrain();
 		}
 	}
-	
 	
 	public static TerrainGrid getInstance() {
 		return instance;

@@ -8,19 +8,20 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.entities.Camera;
+import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
-import com.mrhid6.shaders.TerrianShader;
+import com.mrhid6.shaders.TerrainShader;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.textures.TerrianTexturePack;
 import com.mrhid6.utils.Maths;
 
-public class TerrianRenderer extends SubRenderer{
+public class TerrainRenderer extends SubRenderer{
 	
-	private TerrianShader shader;
+	private TerrainShader shader;
 	
-	public TerrianRenderer(Matrix4f projectionMatrix) {
-		this.shader = new TerrianShader();
+	public TerrainRenderer(Matrix4f projectionMatrix) {
+		this.shader = new TerrainShader();
 		
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
@@ -92,7 +93,9 @@ public class TerrianRenderer extends SubRenderer{
 
 	@Override
 	public void cleanUp() {
+		Logger.info("CleanUp Started");
 		shader.cleanUp();
+		Logger.info("CleanUp Finished");
 	}
 	
 }
