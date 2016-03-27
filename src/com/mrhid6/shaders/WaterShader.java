@@ -8,8 +8,8 @@ import com.mrhid6.utils.Maths;
 
 public class WaterShader extends ShaderProgram {
 
-	private final static String VERTEX_FILE = "res/shaders/waterVertex.glsl";
-	private final static String FRAGMENT_FILE = "res/shaders/waterFragment.glsl";
+	private final static String VERTEX_FILE = "/shaders/waterVertex.glsl";
+	private final static String FRAGMENT_FILE = "/shaders/waterFragment.glsl";
 
 	private int location_modelMatrix;
 	private int location_viewMatrix;

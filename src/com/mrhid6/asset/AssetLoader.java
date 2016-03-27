@@ -9,7 +9,7 @@ import com.mrhid6.utils.Loader;
 
 public class AssetLoader {
 	
-	public static final String ASSETSLOCATION="res/assets";
+	public static final String ASSETSLOCATION="/assets";
 	
 	public static HashMap<String, Asset> assets = new HashMap<String, Asset>();
 	

@@ -75,7 +75,7 @@ public class WorldArea {
 	
 	public static String getAreaURL(int areaID){
 		String idString = (areaID>=10 && areaID<100 )?"0"+areaID:(areaID<10)?"00"+areaID:""+areaID;
-		return "res/map/area_"+idString;
+		return "/map/area_"+idString;
 	}
 	
 }

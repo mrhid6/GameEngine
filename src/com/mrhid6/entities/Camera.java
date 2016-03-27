@@ -4,9 +4,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.render.DisplayManager;
-import com.mrhid6.terrians.Terrain;
-import com.mrhid6.terrians.TerrainGrid;
-import com.mrhid6.utils.Maths;
 
 public class Camera {
 	private final float MINZOOM=26;

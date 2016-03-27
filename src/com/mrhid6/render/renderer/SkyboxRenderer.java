@@ -9,7 +9,6 @@ import org.lwjgl.util.vector.Matrix4f;
 import com.mrhid6.entities.Camera;
 import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
-import com.mrhid6.render.DisplayManager;
 import com.mrhid6.shaders.SkyboxShader;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.world.areas.WorldArea;
@@ -64,10 +63,7 @@ public class SkyboxRenderer {
 
 	private RawModel cube;
 	private int texture;
-	private int nightTexture;
 	private SkyboxShader shader;
-
-	private float time;
 
 	public SkyboxRenderer( Matrix4f projectionMatrix) {
 
@@ -84,7 +80,7 @@ public class SkyboxRenderer {
 		}
 
 		texture = loader.loadCubeMap(TEXTURE_FILES_DAY);
-		nightTexture = loader.loadCubeMap(TEXTURE_FILES_NIGHT);
+		//nightTexture = loader.loadCubeMap(TEXTURE_FILES_NIGHT);
 
 		shader = new SkyboxShader();
 		shader.start();
@@ -108,8 +104,6 @@ public class SkyboxRenderer {
 	}
 
 	private void bindTextures(){
-		time += DisplayManager.getFrameTimeSecond() * 1000;
-		time %= 24000;
 		int texture1 = texture;
 		int texture2 = texture;
 		float blendFactor = 0;

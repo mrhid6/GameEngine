@@ -127,7 +127,7 @@ public class MasterRenderer {
 	public void renderWaterFBO(){
 
 		Camera camera = Camera.getInstance();
-		WaterFrameBuffers waterFBOs = WaterRenderer.getInstance().getWaterFBOs();
+		
 		ArrayList<WaterTile> waters = WaterRenderer.getInstance().getWaters();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
@@ -135,6 +135,7 @@ public class MasterRenderer {
 		for(int i=0;i<waters.size();i++){
 			
 			WaterTile tile = waters.get(i);
+			WaterFrameBuffers waterFBOs = WaterRenderer.getInstance().getWaterFBOs().get(i);
 			
 			waterFBOs.bindReflectionFrameBuffer();
 			float distance = 2 * (camera.getPosition().y - tile.getPosition().getY());

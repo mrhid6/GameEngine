@@ -74,6 +74,7 @@ public class Player extends Entity{
 		}
 		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSecond(), dz);
 		
+		
 	}
 	
 	private void jump(){ 
@@ -90,24 +91,29 @@ public class Player extends Entity{
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)){
 			speedMultiplier = SPRINT_SPEED;
 		}
-		
+		this.hasMoved = false;
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
+			this.hasMoved = true;
 			this.currentSpeed = (RUN_SPEED + speedMultiplier);
 		}else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
+			this.hasMoved = true;
 			this.currentSpeed = -(RUN_SPEED + speedMultiplier);
 		}else{
 			this.currentSpeed = 0;
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
+			this.hasMoved = true;
 			this.currentTurnSpeed = -TURN_SPEED;
 		}else if(Keyboard.isKeyDown(Keyboard.KEY_A)){
+			this.hasMoved = true;
 			this.currentTurnSpeed = TURN_SPEED;
 		}else{
 			this.currentTurnSpeed = 0;
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+			this.hasMoved = true;
 			jump();
 		}
 	}

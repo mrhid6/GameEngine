@@ -128,7 +128,7 @@ public class Terrain {
 	private void generateHeights(){
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(new File(heightMap));
+			image = ImageIO.read(Class.class.getResource(heightMap));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -187,14 +187,7 @@ public class Terrain {
 			model = null;
 		}
 		
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File(heightMap));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		int VERTEX_COUNT = image.getHeight();
+		int VERTEX_COUNT = heights.length;
 		
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		float[] vertices = new float[count * 3];

@@ -1,12 +1,11 @@
 package com.mrhid6.utils;
  
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
- 
+
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -16,15 +15,8 @@ public class OBJFileLoader {
      
  
     public static ModelData loadOBJ(String objFileName) {
-        FileReader isr = null;
-        File objFile = new File(objFileName);
-        try {
-            isr = new FileReader(objFile);
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found in res folder!");
-            System.exit(-1);
-        }
-        BufferedReader reader = new BufferedReader(isr);
+        InputStream in = Class.class.getResourceAsStream(objFileName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String line;
         List<Vertex> vertices = new ArrayList<Vertex>();
         List<Vector2f> textures = new ArrayList<Vector2f>();

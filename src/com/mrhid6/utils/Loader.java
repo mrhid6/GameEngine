@@ -1,9 +1,9 @@
 package com.mrhid6.utils;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -56,8 +56,10 @@ public class Loader {
 	}
 
 	public JSONObject loadJSON(String JSONFile) throws IOException{
-
-		BufferedReader reader = new BufferedReader(new FileReader(JSONFile));
+		
+		InputStream is = Class.class.getResourceAsStream(JSONFile);
+		
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
 		String line;
 		while ((line=reader.readLine())!=null) {
@@ -131,7 +133,8 @@ public class Loader {
 		}else{
 			Texture texture = null;
 			try {
-				texture = TextureLoader.getTexture("PNG", new FileInputStream(fileName));
+				InputStream in = Class.class.getResourceAsStream(fileName);
+				texture = TextureLoader.getTexture("PNG", in);
 				GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 				GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, -0.4f);
@@ -253,7 +256,7 @@ public class Loader {
 		int height = 0;
 		ByteBuffer buffer = null;
 		try {
-			FileInputStream in = new FileInputStream(fileName);
+			InputStream in = Class.class.getResourceAsStream(fileName);
 			PNGDecoder decoder = new PNGDecoder(in);
 			width = decoder.getWidth();
 			height = decoder.getHeight();

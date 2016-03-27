@@ -25,21 +25,20 @@ public class WaterRenderer {
 	
 	private RawModel quad;
 	private WaterShader shader;
-	private WaterFrameBuffers waterFBOs;
 	private int dudvTexture;
 	private int normalMap;
 	
 	private float moveFactor = 0;
 	
 	private ArrayList<WaterTile> waters = new ArrayList<WaterTile>();
+	private ArrayList<WaterFrameBuffers> waterFBOs = new ArrayList<WaterFrameBuffers>();
 	
 	private static WaterRenderer instance;
 	
 	public WaterRenderer(Matrix4f projectionMatrix) {
 		this.shader = new WaterShader();;
-		this.waterFBOs = new WaterFrameBuffers();
-		dudvTexture = Loader.getInstance().loadTexture("res/textures/waterDUDV.png");
-		normalMap = Loader.getInstance().loadTexture("res/textures/waterNormal.png");
+		dudvTexture = Loader.getInstance().loadTexture("/textures/waterDUDV.png");
+		normalMap = Loader.getInstance().loadTexture("/textures/waterNormal.png");
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.connectTextureUnits();
@@ -52,7 +51,10 @@ public class WaterRenderer {
 	public void render(Light sun) {
 		
 		prepareRender(sun);
-		for (WaterTile tile : waters) {
+		for (int i = 0;i<waters.size();i++) {
+			WaterTile tile = waters.get(i);
+			bindTextures(i);
+			
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(tile.getPosition(),tile.getScale());
 			shader.loadModelMatrix(modelMatrix);
 			GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
@@ -71,19 +73,25 @@ public class WaterRenderer {
 		
 		GL30.glBindVertexArray(quad.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		
+	}
+	
+	private void bindTextures(int waterID){
+		
+		WaterFrameBuffers wfbo = waterFBOs.get(waterID);
+		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterFBOs.getReflectionTexture());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, wfbo.getReflectionTexture());
 		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterFBOs.getRefractionTexture());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, wfbo.getRefractionTexture());
 		GL13.glActiveTexture(GL13.GL_TEXTURE2);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, dudvTexture);
 		GL13.glActiveTexture(GL13.GL_TEXTURE3);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, normalMap);
 		GL13.glActiveTexture(GL13.GL_TEXTURE4);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, waterFBOs.getRefractionDepthTexture());
-		
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, wfbo.getRefractionDepthTexture());
 	}
 	
 	private void unbind(){
@@ -107,20 +115,25 @@ public class WaterRenderer {
 	public static WaterRenderer getInstance() {
 		return instance;
 	}
-	
-	public WaterFrameBuffers getWaterFBOs() {
-		return waterFBOs;
-	}
 
 	public void cleanUp() {
 		Logger.info("CleanUp Started");
 		shader.cleanUp();
-		waterFBOs.cleanUp();
+		
+		for(WaterFrameBuffers wfbo : waterFBOs){
+			wfbo.cleanUp();
+		}
+		
 		Logger.info("CleanUp Finished");
+	}
+	
+	public ArrayList<WaterFrameBuffers> getWaterFBOs() {
+		return waterFBOs;
 	}
 	
 	public void processWater(WaterTile water){
 		waters.add(water);
+		waterFBOs.add(new WaterFrameBuffers());
 	}
 	
 	public ArrayList<WaterTile> getWaters() {
