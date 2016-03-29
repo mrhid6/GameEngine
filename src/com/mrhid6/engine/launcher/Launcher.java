@@ -14,19 +14,37 @@ import com.mrhid6io.utils.WinRegistry;
 public class Launcher {
 
 	private static final String FS = File.separator;
-	private static final String TITLE = "GameEngine";
-
+	public static final String TITLE = "GameEngine";
+	
+	private String installDir = null;
 	private boolean installNeeded = false;
-
+	
+	private static GameVersion currentVersion = new GameVersion("0.0.0");
+	private static GameVersion serverVersion = new GameVersion("0.0.0");
+	
+	private LauncherGUI gui;
+	
 	public Launcher() {
 		// Determine if new install/update or exisiting
 
 		checkIfInstallDirExists();
+		
+		if(installNeeded == true){
+			new Installer(installDir);
+		}else{
+			openLauncherGUI();
+		}
+	}
+	
+	private void openLauncherGUI(){
+		try {
+			gui = new LauncherGUI();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void checkIfInstallDirExists(){
-
-		String installDir = null;
 
 		if(Utils.isWindows()){
 			
@@ -44,6 +62,15 @@ public class Launcher {
 				installDir = System.getenv("ProgramFiles") + FS + TITLE;
 			}
 		}
+		
+		PhpConnection php = new PhpConnection("http://api-repo.hostxtra.co.uk/Game/Build.json", 5000);
+		php.connect();
+		String SrvVersionData = php.readData();
+		php.disconnect();
+		
+		JSONObject config = new JSONObject(SrvVersionData);
+		
+		serverVersion = new GameVersion(config.getString("version"));
 
 		if(installDir != null){
 			File folder = new File(installDir);
@@ -53,26 +80,20 @@ public class Launcher {
 				installNeeded = true;
 			}else{
 				// If install dir exists then check if correct version.
-
+				
 				String CGFFile = installDir + FS + "config.json";
 				File cfgFile = new File(CGFFile);
 
 				if(cfgFile.exists()){
 					// If config file exists load json file.
 					try {
-						JSONObject config = loadJSON(CGFFile);
-						GameVersion version = new GameVersion(config.getString("version"));
+						config = loadJSON(CGFFile);
+						currentVersion = new GameVersion(config.getString("version"));
 						
-						PhpConnection php = new PhpConnection("http://api-repo.hostxtra.co.uk/Game/Build.json");
-						php.connect();
-						String SrvVersionData = php.readData();
-						php.disconnect();
 						
-						config = new JSONObject(SrvVersionData);
-						
-						GameVersion SrvVersion = new GameVersion(config.getString("version"));
-						
-						System.out.println(version.equals(SrvVersion));
+						if(!currentVersion.equals(serverVersion)){
+							installNeeded = true;
+						}
 						
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -83,9 +104,15 @@ public class Launcher {
 				}
 
 			}
-			System.out.println(installDir);
-			System.out.println(installNeeded);
 		}
+	}
+	
+	public static GameVersion getCurrentVersion() {
+		return currentVersion;
+	}
+	
+	public static GameVersion getServerVersion() {
+		return serverVersion;
 	}
 
 

@@ -34,6 +34,10 @@ public class GameVersion {
 	public int getPatch() {
 		return patch;
 	}
+	
+	public String displayVersion(){
+		return getMajor() + "." + getMinor() + "." + getPatch();
+	}
 
 	@Override
 	public boolean equals(Object obj){
