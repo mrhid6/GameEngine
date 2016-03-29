@@ -56,9 +56,9 @@ public class Loader {
 	}
 
 	public JSONObject loadJSON(String JSONFile) throws IOException{
-		
+
 		InputStream is = Class.class.getResourceAsStream(JSONFile);
-		
+
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
 		String line;
@@ -74,6 +74,16 @@ public class Loader {
 		return obj;
 	}
 
+	public void loadToVAO(int vaoID, float[] positions, float[] textureCoords, float[] normals, int[] indices){
+		
+		GL30.glBindVertexArray(vaoID);
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+
+		unbindVAO();
+	}
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices){
 
 		int vaoID = createVAO();
@@ -164,7 +174,7 @@ public class Loader {
 			GL11.glDeleteTextures(textures.get(key));
 		}
 	}
-	
+
 	public void cleanUpRawModel(RawModel model){
 		for(int i=0;i<vaos.size();i++){
 			int vao = vaos.get(i);

@@ -19,6 +19,7 @@ import com.mrhid6.utils.Maths;
 public class TerrainRenderer extends SubRenderer{
 	
 	private TerrainShader shader;
+	private Vector3f reuseableV3f = new Vector3f();
 	
 	public TerrainRenderer(Matrix4f projectionMatrix) {
 		this.shader = new TerrainShader();
@@ -85,8 +86,11 @@ public class TerrainRenderer extends SubRenderer{
 	}
 	
 	private void loadModelMatrix(Terrain terrian){
+		
+		reuseableV3f.set(terrian.getX(), 0, terrian.getZ());
+		
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(
-				new Vector3f(terrian.getX(), 0, terrian.getZ()), 0, 0, 0, 1);
+				reuseableV3f, 0, 0, 0, 1);
 		
 		shader.loadTransformationMatrix(transformationMatrix);
 	}

@@ -14,6 +14,8 @@ public class BrushMouseTool extends MouseTool {
 	
 	private int raduis = 10;
 	
+	private Vector3f reuseableV3f = new Vector3f();
+	
 	@Override
 	public void update() {
 		
@@ -35,11 +37,16 @@ public class BrushMouseTool extends MouseTool {
 		if(Mouse.isButtonDown(1)){
 			adjustTerrainHeight(-0.1F, raduis);
 		}
+		
+		if(Mouse.isButtonDown(2)){
+			smoothTerrain(0.1f, raduis);
+		}
 	}
 
 
 	private void adjustTerrainHeight(float amount, int raduis){
 		MousePicker picker = GameEngine.getInstance().getPicker();
+		picker.update();
 		Vector3f terrainPoint = picker.getCurrentTerrainPoint();
 		if(terrainPoint !=null){
 			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);
@@ -54,7 +61,9 @@ public class BrushMouseTool extends MouseTool {
 					if(Math.sqrt(i * i + j * j)<=raduis){
 						if(x>=0 && z>=0 && x<heights.length && z<heights.length){
 							float prevHeight = heights[x][z];
-							float distance = (Maths.distance(terrainPoint, new Vector3f(x*2, terrainPoint.y, z*2))/20)*0.1F;
+							
+							reuseableV3f.set(x*2, terrainPoint.y, z*2);
+							float distance = (Maths.distance(terrainPoint, reuseableV3f)/20)*0.1F;
 							float newAmount =(amount>0)?(amount-distance):(amount+distance);
 							float newheight=prevHeight+newAmount;
 							if(newheight>0 && newheight<Terrain.MAX_HEIGHT*2){
@@ -71,5 +80,61 @@ public class BrushMouseTool extends MouseTool {
 			t.setHeights(heights);
 			t.generateTerrain();
 		}
+	}
+	
+	private void smoothTerrain(float amount, int raduis){
+		MousePicker picker = GameEngine.getInstance().getPicker();
+		picker.update();
+		Vector3f terrainPoint = picker.getCurrentTerrainPoint();
+		
+		if(terrainPoint !=null){
+			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);
+			float[][] heights = t.getHeights();
+			
+			for(int i=-raduis;i<=raduis;i++){
+				for(int j=-raduis;j<=raduis;j++){
+					
+					int x = i+((int)terrainPoint.x/2);
+					int z = j+((int)terrainPoint.z/2);
+					
+					if(Math.sqrt(i * i + j * j)<=raduis){
+						if(x>=0 && z>=0 && x<heights.length && z<heights.length){
+							float heightTL = getHeight(heights, x-1, z-1);
+							float heightTM = getHeight(heights, x-1, z);
+							float heightTR = getHeight(heights, x-1, z+1);
+							float heightCL = getHeight(heights, x, z-1);
+							//float heightCM = getHeight(heights, x, z);
+							float heightCR = getHeight(heights, x, z+1);
+							float heightBL = getHeight(heights, x+1, z-1);
+							float heightBM = getHeight(heights, x+1, z);
+							float heightBR = getHeight(heights, x+1, z+1);
+							
+							
+							//float prevHeight = heights[x][z];
+							float average = (heightTL + heightTM + heightTR + heightCL + heightCR + heightBL + heightBM + heightBR) / 8.0f;
+							/*float diff = prevHeight - average;
+							reuseableV3f.set(x*2, terrainPoint.y, z*2);
+							float distance = (Maths.distance(terrainPoint, new Vector3f(reuseableV3f))/20)*0.1F;*/
+							
+							heights[x][z]=average;
+							
+							if(heights[x][z]>Terrain.MAX_HEIGHT*2)heights[x][z]=Terrain.MAX_HEIGHT*2;
+							if(heights[x][z]<0)heights[x][z]=0;
+						}
+					}
+				}
+			}
+			t.setHeights(heights);
+			t.generateTerrain();
+			
+		}
+	}
+	
+	private float getHeight(float[][] heights, int x, int z){
+		if(x<0 || x>=heights.length || z<0 || z>=heights.length){
+			return 0;
+		}
+		
+		return heights[x][z];
 	}
 }

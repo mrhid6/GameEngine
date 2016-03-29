@@ -24,6 +24,8 @@ public class SkyboxShader extends ShaderProgram{
 
 	private float rotation = 0;
 	
+	private Vector3f reuseableV3f = new Vector3f();
+	
 	public SkyboxShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
@@ -38,7 +40,8 @@ public class SkyboxShader extends ShaderProgram{
 		matrix.m31 = 0;
 		matrix.m32 = 0;
 		rotation += ROTATE_SPEED * DisplayManager.getFrameTimeSecond();
-		Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0), matrix, matrix);
+		reuseableV3f.set(0, 1, 0);
+		Matrix4f.rotate((float) Math.toRadians(rotation), reuseableV3f, matrix, matrix);
 		super.loadMatrix(location_viewMatrix, matrix);
 	}
 	

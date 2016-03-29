@@ -101,8 +101,6 @@ public class GameEngine {
 
 	private void update(){
 
-		picker.update();
-
 		if (Input.getKeyUp(Input.KEY_F1)){
 			GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
 		}

@@ -8,12 +8,14 @@ import com.mrhid6.entities.Camera;
 
 public class Maths {
 
-
+	private static Vector3f reuseableV3f = new Vector3f();
+	
 	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
 		Matrix4f.translate(translation, matrix, matrix);
-		Matrix4f.scale(new Vector3f(scale.x, scale.y, 1f), matrix, matrix);
+		reuseableV3f.set(scale.x, scale.y, 1f);
+		Matrix4f.scale(reuseableV3f, matrix, matrix);
 		return matrix;
 	}
 
@@ -57,8 +59,9 @@ public class Maths {
 		Matrix4f.rotate((float)Math.toRadians(rx), new Vector3f(1,0,0), matrix, matrix);
 		Matrix4f.rotate((float)Math.toRadians(ry), new Vector3f(0,1,0), matrix, matrix);
 		Matrix4f.rotate((float)Math.toRadians(rz), new Vector3f(0,0,1), matrix, matrix);
-
-		Matrix4f.scale(new Vector3f(scale, scale, scale), matrix, matrix);
+		
+		reuseableV3f.set(scale, scale, scale);
+		Matrix4f.scale(reuseableV3f, matrix, matrix);
 
 		return matrix;
 	}
@@ -77,8 +80,8 @@ public class Maths {
 		Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
 
 		Vector3f cameraPos = camera.getPosition();
-		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,	-cameraPos.y, -cameraPos.z);
-		Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
+		reuseableV3f.set(-cameraPos.x,	-cameraPos.y, -cameraPos.z);
+		Matrix4f.translate(reuseableV3f, viewMatrix, viewMatrix);
 
 		return viewMatrix;
 	}

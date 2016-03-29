@@ -33,6 +33,7 @@ public class TerrainShader extends ShaderProgram{
 	private int location_blendMap;
 	private int location_plane;
 	
+	private Vector3f reuseableV3f = new Vector3f();
 	
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -103,9 +104,11 @@ public class TerrainShader extends ShaderProgram{
 				super.loadVector(location_lightColour[i], lights.get(i).getColour());
 				super.loadVector(location_attenuation[i], lights.get(i).getAttenuation());
 			}else{
-				super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
-				super.loadVector(location_attenuation[i], new Vector3f(1, 0, 0));
+				reuseableV3f.set(0, 0, 0);
+				super.loadVector(location_lightPosition[i], reuseableV3f);
+				super.loadVector(location_lightColour[i], reuseableV3f);
+				reuseableV3f.set(1, 0, 0);
+				super.loadVector(location_attenuation[i], reuseableV3f);
 			}
 		}
 	}
