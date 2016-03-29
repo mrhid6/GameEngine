@@ -1,7 +1,5 @@
 package com.mrhid6.utils;
 
-import java.math.BigDecimal;
-
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -110,12 +108,6 @@ public class Maths {
 		value=Maths.maxf(value, max);
 		value=Maths.minf(value, min);
 		return value;
-	}
-
-	public static float round(float d, int decimalPlace) {
-		BigDecimal bd = new BigDecimal(Float.toString(d));
-		bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
-		return bd.floatValue();
 	}
 
 }
