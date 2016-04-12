@@ -114,4 +114,8 @@ public class World {
 	public Light getWorldSun() {
 		return worldSun;
 	}
+	
+	public WorldArea getWorldArea() {
+		return worldArea;
+	}
 }
