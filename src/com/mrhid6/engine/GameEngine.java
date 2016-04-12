@@ -51,12 +51,12 @@ public class GameEngine {
 				Logger.info("Initialized");
 
 				createDisplay();
+				theWorld = new World();
 				renderer = new MasterRenderer();
 				new TerrainGrid();
 				mouseManager = new MouseToolManager();
 				waterRenderer = new WaterRenderer(renderer.getProjectionMatrix());
 				guiManager = new GuiManager();
-				theWorld = new World();
 				picker = new MousePicker();
 
 				theWorld.initialize();
