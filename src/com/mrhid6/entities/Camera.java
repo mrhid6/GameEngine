@@ -14,6 +14,7 @@ public class Camera {
 	private float newdistanceFromPlayer = DEFAULT_DISTANCE;
 
 	private float angleAroundPlayer = 0;
+	private float rotationSpeed = 0F;
 
 	private Vector3f position = new Vector3f(100,35,50);
 	private float pitch;
@@ -126,10 +127,12 @@ public class Camera {
 				float halfAngle = angleAroundPlayer / 2;
 
 				if(halfAngle > 0 && halfAngle <=90){
-					angleAroundPlayer-=20F * DisplayManager.getFrameTimeSecond();
+					rotationSpeed-=(50F * DisplayManager.getFrameTimeSecond());
 				}else{
-					angleAroundPlayer+=20F * DisplayManager.getFrameTimeSecond();
+					rotationSpeed+=(50F * DisplayManager.getFrameTimeSecond());
 				}
+				
+				angleAroundPlayer += rotationSpeed * DisplayManager.getFrameTimeSecond();
 
 			if( (angleAroundPlayer > 0 && angleAroundPlayer <0.5F) || (angleAroundPlayer < 0 && angleAroundPlayer > -0.5F)){
 				angleAroundPlayer = 0;
@@ -137,6 +140,7 @@ public class Camera {
 		}
 
 		if(angleAroundPlayer == 0){
+			rotationSpeed = 0;
 			resetAngle = false;
 		}
 
