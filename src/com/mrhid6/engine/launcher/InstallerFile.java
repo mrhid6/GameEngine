@@ -32,6 +32,8 @@ class InstallerFile extends Observable implements Runnable {
 
 	private String dest;
 
+	private String installdir;
+
 	// Constructor for Download.
 	public InstallerFile(URL url, String FileDest) {
 		this.url = url;
@@ -79,7 +81,7 @@ class InstallerFile extends Observable implements Runnable {
 	public void resume() {
 		status = DOWNLOADING;
 		stateChanged();
-		download();
+		download(this.installdir);
 	}
 
 	// Cancel this download.
@@ -95,14 +97,15 @@ class InstallerFile extends Observable implements Runnable {
 	}
 
 	// Start or resume downloading.
-	public void download() {
+	public void download(String string) {
+		this.installdir = string;
 		Thread thread = new Thread(this);
 		thread.start();
 	}
 
 	// Get file name portion of URL.
 	private String getFileName() {
-		return this.dest;
+		return installdir+this.dest;
 	}
 
 

@@ -7,27 +7,37 @@ import java.io.IOException;
 
 import org.json.JSONObject;
 
+import com.mrhid6.settings.Constants;
 import com.mrhid6io.connection.PhpConnection;
 import com.mrhid6io.utils.Utils;
-import com.mrhid6io.utils.WinRegistry;
 
 public class Launcher {
-
-	private static final String FS = File.separator;
-	public static final String TITLE = "GameEngine";
 	
 	private String installDir = null;
 	private boolean installNeeded = false;
+	
+	
+	private String ProgramDataDir = "";
 	
 	private static GameVersion currentVersion = new GameVersion("0.0.0");
 	private static GameVersion serverVersion = new GameVersion("0.0.0");
 	
 	private LauncherGUI gui;
+
+	private static Launcher instance;
 	
 	public Launcher() {
 		// Determine if new install/update or exisiting
 
+		if(Utils.isWindows()){
+			ProgramDataDir = System.getenv("ProgramData")+Constants.FS+Constants.TITLE;
+		}else if(Utils.isLinux()){
+			ProgramDataDir = "/etc/"+Constants.TITLE;
+		}
+		
 		checkIfInstallDirExists();
+		
+		instance = this;
 		
 		if(installNeeded == true){
 			new Installer(installDir);
@@ -36,30 +46,67 @@ public class Launcher {
 		}
 	}
 	
-	private void openLauncherGUI(){
+	public static Launcher getInstance() {
+		return instance;
+	}
+	
+	public String getProgramDataDir() {
+		return ProgramDataDir;
+	}
+	
+	public void openLauncherGUI(){
 		try {
 			gui = new LauncherGUI();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private void createProgramDataDir(){
+		File dirFile = new File(ProgramDataDir);
+		
+		if(!dirFile.exists()){
+			dirFile.mkdirs();
+		}
+	}
+	
+	private boolean checkProgramDataConf(){
+		String programdataConf = ProgramDataDir + Constants.FS + "config.json";
+		File config = new File(programdataConf);
+		
+		if(!config.exists()){return false;}
+		
+		return true;
+	}
+	
+	private String getProgramDataConfInstDir(){
+		String programdataConf = ProgramDataDir + Constants.FS + "config.json";
+		
+		try {
+			JSONObject config = loadJSON(programdataConf);
+			return config.getString("installdir");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 
 	private void checkIfInstallDirExists(){
-
+		
+		createProgramDataDir();
+		
 		if(Utils.isWindows()){
 			
-			try {
-				String regLocation = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\" + TITLE + ".exe";
-				String value = WinRegistry.readString(WinRegistry.HKEY_LOCAL_MACHINE, regLocation, "Path");
+			if(checkProgramDataConf()){
+				String value = getProgramDataConfInstDir();
 				if(value != null){
 					installDir = value;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 			
 			if(installDir == null || installDir.equalsIgnoreCase("")){
-				installDir = System.getenv("ProgramFiles") + FS + TITLE;
+				installDir = Constants.WIN_DEFAULT_INSTALL_DIR;
 			}
 		}
 		
@@ -81,7 +128,7 @@ public class Launcher {
 			}else{
 				// If install dir exists then check if correct version.
 				
-				String CGFFile = installDir + FS + "config.json";
+				String CGFFile = installDir + Constants.FS + "config.json";
 				File cfgFile = new File(CGFFile);
 
 				if(cfgFile.exists()){

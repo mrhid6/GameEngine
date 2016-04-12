@@ -9,15 +9,15 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL32;
 
 import com.mrhid6.log.Logger;
-import com.mrhid6.render.DisplayManager;
+import com.mrhid6.settings.Constants;
 
 public class WaterFrameBuffers {
 
-	protected static final int REFLECTION_WIDTH = DisplayManager.WIDTH / 4;
-	private static final int REFLECTION_HEIGHT = DisplayManager.HEIGHT / 4;
+	protected static final int REFLECTION_WIDTH = Constants.WIDTH / 4;
+	private static final int REFLECTION_HEIGHT = Constants.HEIGHT / 4;
 	
-	protected static final int REFRACTION_WIDTH = DisplayManager.WIDTH;
-	private static final int REFRACTION_HEIGHT = DisplayManager.HEIGHT;
+	protected static final int REFRACTION_WIDTH = Constants.WIDTH;
+	private static final int REFRACTION_HEIGHT = Constants.HEIGHT;
 
 	private int reflectionFrameBuffer;
 	private int reflectionTexture;

@@ -9,14 +9,9 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 
 import com.mrhid6.log.Logger;
+import com.mrhid6.settings.Constants;
 
 public class DisplayManager {
-
-	public static final int WIDTH = 1360;
-	public static final int HEIGHT = 768;
-	private static final int FPS_CAP = 120;
-	private static final String TITLE = "Game V2";
-	public static final float RATIO = (float) WIDTH/ (float) HEIGHT;
 	
 	private static long lastFrameTime;
 	private static float delta;
@@ -26,15 +21,15 @@ public class DisplayManager {
 		ContextAttribs attribs = new ContextAttribs(3,2).withForwardCompatible(true).withProfileCore(true);
 		
 		try {
-			Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
+			Display.setDisplayMode(new DisplayMode(Constants.WIDTH, Constants.HEIGHT));
 			Display.create(new PixelFormat(4,4,4,4), attribs);
-			Display.setTitle(TITLE);
+			Display.setTitle(Constants.TITLE);
 			Logger.info("Display Created");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
 		
-		GL11.glViewport(0, 0, WIDTH, HEIGHT);
+		GL11.glViewport(0, 0, Constants.WIDTH, Constants.HEIGHT);
 		lastFrameTime = getCurrentTime();
 	}
 	public static float getFrameTimeSecond(){
@@ -42,7 +37,7 @@ public class DisplayManager {
 	}
 	public static void updateDisplay(){
 		
-		Display.sync(FPS_CAP);
+		Display.sync(Constants.FPS_CAP);
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;

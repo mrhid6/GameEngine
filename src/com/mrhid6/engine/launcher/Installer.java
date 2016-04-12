@@ -8,12 +8,11 @@ import java.util.ArrayList;
 
 import org.json.JSONObject;
 
+import com.mrhid6.settings.Constants;
 import com.mrhid6io.connection.PhpConnection;
 import com.mrhid6io.utils.Utils;
 
 public class Installer {
-
-	private static final String FS = File.separator;
 	private static final String URL = "http://api-repo.hostxtra.co.uk/Game";
 
 	private String installDir;
@@ -30,8 +29,12 @@ public class Installer {
 	public Installer(String installDir) {
 		this.installDir = installDir;
 
-		deleteAllFiles();
+		gui = new InstallerGUI(this.installDir );
 
+		instance = this;
+	}
+	
+	public void loadInstallFiles(){
 		try{
 			PhpConnection php = new PhpConnection(URL + "/Files.json", 5000);
 			php.connect();
@@ -42,18 +45,15 @@ public class Installer {
 
 			for(int i=0;i<fileData.names().length();i++){
 				String fileToDownload = fileData.names().getString(i);
-				String fileDest = this.installDir + FS + fileData.getString(fileToDownload).replace("/", FS);
+				String fileDest = Constants.FS + fileData.getString(fileToDownload).replace("/", Constants.FS);
 
 				filesToDownload.add(new InstallerFile(URL + fileToDownload, fileDest));
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		gui = new InstallerGUI();
-
+		
 		calcSize();
-
-		instance = this;
 	}
 
 	private void deleteAllFiles(){
@@ -92,14 +92,27 @@ public class Installer {
 		}
 		gui.setProgressBarMax((int)totalSize);
 	}
+	
+	public String getInstallDir() {
+		return installDir;
+	}
+	
+	public void setInstallDir(String installDir) {
+		this.installDir = installDir;
+	}
 
 	public void downloadFiles(){
+		
+		deleteAllFiles();
+		
+		loadInstallFiles();
+		
 		Thread th = new Thread(){
 			@Override
 			public void run() {
 				
 				for(InstallerFile file : filesToDownload){
-					file.download();
+					file.download(getInstallDir());
 					totalSize += file.getSize();
 				}
 				
@@ -115,15 +128,14 @@ public class Installer {
 						
 						if(file.getSize()>-1){
 							totalSize+=file.getSize();
-							gui.setProgressBarMax((int)totalSize);
 						}
 						
 						if(file.getStatus() == InstallerFile.DOWNLOADING){
 							downloading = true;
 						}
 					}
-
 					gui.setProgressBarVal(curVal);
+					gui.setProgressBarMax((int)totalSize);
 
 					if(!downloading){
 						running = false;
@@ -153,14 +165,34 @@ public class Installer {
 
 	private void createConfigFile(){
 
-		String configStr = installDir + FS + "config.json";
+		String configStr = installDir + Constants.FS + "config.json";
+		String progDataconfigstr = Launcher.getInstance().getProgramDataDir() + Constants.FS + "config.json";
+		
 		File configFile = Utils.loadOrCreateFile(configStr);
-
+		File progDataconfigFile = Utils.loadOrCreateFile(progDataconfigstr);
+		
+		
+		
 		try {
 			JSONObject config = new JSONObject();
 			config.put("version", Launcher.getServerVersion().displayVersion());
 
 			FileWriter fileWriter = new FileWriter(configFile);  
+
+
+			fileWriter.write(config.toString());
+			fileWriter.flush();  
+			fileWriter.close();  
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			JSONObject config = new JSONObject();
+			config.put("installdir", getInstallDir());
+
+			FileWriter fileWriter = new FileWriter(progDataconfigFile);  
 
 
 			fileWriter.write(config.toString());

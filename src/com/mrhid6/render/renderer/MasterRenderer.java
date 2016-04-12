@@ -167,7 +167,7 @@ public class MasterRenderer {
 
 	public void processPlayer(Player player){
 		try{
-			PlayerAsset playerAsset = player.getPlayerAsset();
+			PlayerAsset playerAsset = player.getAsset();
 			TexturedModel entityModel = new TexturedModel(playerAsset.getModel(), playerAsset.getTexture());
 			List<Entity> batch = entities.get(entityModel);
 
@@ -197,6 +197,9 @@ public class MasterRenderer {
 	}*/
 
 	public void processWorldObject(WorldObject object){
+		
+		if(object == null || object.getAsset() == null || object.getAsset().getModel() == null) return;
+		
 		StaticWorldObjectAsset objectAsset = object.getAsset();
 		TexturedModel entityModel = new TexturedModel(objectAsset.getModel(), objectAsset.getTexture());
 		List<WorldObject> batch = worldObjects.get(entityModel);

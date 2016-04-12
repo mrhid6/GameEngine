@@ -1,6 +1,5 @@
 package com.mrhid6.engine.launcher;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -8,10 +7,11 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import com.mrhid6.settings.Constants;
 
 public class LauncherGUI extends JFrame{
 
@@ -32,7 +32,7 @@ public class LauncherGUI extends JFrame{
 		panel.setSize(getSize());
 		panel.setPreferredSize(getSize());
 
-		setTitle(Launcher.TITLE + " Launcher");
+		setTitle(Constants.TITLE + " Launcher");
 		setSize(800, 600);
 		setPreferredSize(getSize());
 		setResizable(false);
@@ -43,9 +43,7 @@ public class LauncherGUI extends JFrame{
 
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
-				int i=JOptionPane.showConfirmDialog(null, "Are You Sure You Want To Close This?");
-				if(i==0)
-					System.exit(0);
+				System.exit(0);
 			}
 		});
 

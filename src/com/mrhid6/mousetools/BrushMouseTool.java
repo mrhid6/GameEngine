@@ -63,15 +63,11 @@ public class BrushMouseTool extends MouseTool {
 							float prevHeight = heights[x][z];
 							
 							reuseableV3f.set(x*2, terrainPoint.y, z*2);
-							float distance = (Maths.distance(terrainPoint, reuseableV3f)/20)*0.1F;
-							float newAmount =(amount>0)?(amount-distance):(amount+distance);
-							float newheight=prevHeight+newAmount;
-							if(newheight>0 && newheight<Terrain.MAX_HEIGHT*2){
-								heights[x][z] = prevHeight+newAmount;
-							}
+							float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.1F;
+							float newAmount =(amount>0)?Maths.clampf((amount-distance), 0F, 1F):Maths.clampf((amount+distance), -1F, 0F);
 							
-							if(heights[x][z]>Terrain.MAX_HEIGHT*2)heights[x][z]=Terrain.MAX_HEIGHT*2;
-							if(heights[x][z]<0)heights[x][z]=0;
+							float newheight=prevHeight+newAmount;
+							heights[x][z] = heights[x][z]=Maths.clampf(newheight, 0, Terrain.MAX_HEIGHT*2);;
 						}
 					}
 				}
@@ -112,14 +108,11 @@ public class BrushMouseTool extends MouseTool {
 							
 							//float prevHeight = heights[x][z];
 							float average = (heightTL + heightTM + heightTR + heightCL + heightCR + heightBL + heightBM + heightBR) / 8.0f;
-							/*float diff = prevHeight - average;
+							/*float diff = prevHeight - average;*/
 							reuseableV3f.set(x*2, terrainPoint.y, z*2);
-							float distance = (Maths.distance(terrainPoint, new Vector3f(reuseableV3f))/20)*0.1F;*/
+							float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.001F;
 							
-							heights[x][z]=average;
-							
-							if(heights[x][z]>Terrain.MAX_HEIGHT*2)heights[x][z]=Terrain.MAX_HEIGHT*2;
-							if(heights[x][z]<0)heights[x][z]=0;
+							heights[x][z]=Maths.clampf(average+distance, 0, Terrain.MAX_HEIGHT*2);
 						}
 					}
 				}

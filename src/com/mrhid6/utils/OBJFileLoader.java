@@ -14,8 +14,8 @@ import com.mrhid6.render.ModelData;
 public class OBJFileLoader {
      
  
-    public static ModelData loadOBJ(String objFileName) {
-        InputStream in = Class.class.getResourceAsStream(objFileName);
+    public static ModelData loadOBJ(InputStream in) {
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         String line;
         List<Vertex> vertices = new ArrayList<Vertex>();

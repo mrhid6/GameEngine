@@ -1,5 +1,11 @@
 package com.mrhid6.engine;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import org.json.JSONObject;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
@@ -12,6 +18,8 @@ import com.mrhid6.mousetools.MouseToolManager;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.render.renderer.MasterRenderer;
 import com.mrhid6.render.renderer.WaterRenderer;
+import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.utils.MousePicker;
@@ -35,23 +43,27 @@ public class GameEngine {
 	private World theWorld;
 
 	public GameEngine(){
-		Logger.info("Initialized");
 		try{
 
-			createDisplay();
-			renderer = new MasterRenderer();
-			new TerrainGrid();
-			mouseManager = new MouseToolManager();
-			waterRenderer = new WaterRenderer(renderer.getProjectionMatrix());
-			guiManager = new GuiManager();
-			theWorld = new World();
-			picker = new MousePicker();
-			
-			theWorld.initialize();
-			picker.initialize();
-			
-			loadAssets();
+			if(checkInstall()){
+				
+				new Logger();
+				Logger.info("Initialized");
 
+				createDisplay();
+				renderer = new MasterRenderer();
+				new TerrainGrid();
+				mouseManager = new MouseToolManager();
+				waterRenderer = new WaterRenderer(renderer.getProjectionMatrix());
+				guiManager = new GuiManager();
+				theWorld = new World();
+				picker = new MousePicker();
+
+				theWorld.initialize();
+				picker.initialize();
+
+				loadAssets();
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -66,6 +78,38 @@ public class GameEngine {
 
 	public static GameEngine getInstance() {
 		return instance;
+	}
+
+	public boolean checkInstall(){
+		if(!checkProgramDataConf() || getProgramDataConfInstDir()==null){
+
+			JOptionPane.showMessageDialog(null, "Error: Install has been corrupted please install using the Launcher", "Error Opening "+Constants.TITLE, JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean checkProgramDataConf(){
+		String programdataConf = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
+		File config = new File(programdataConf);
+
+		if(!config.exists()){return false;}
+
+		return true;
+	}
+
+	private String getProgramDataConfInstDir(){
+		String programdataConf = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
+		try {
+			JSONObject config = Loader.getInstance().loadJSONFR(programdataConf);
+			GameSettings.INSTALLDIR = config.getString("installdir");
+			return GameSettings.INSTALLDIR;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	private void createDisplay(){
@@ -134,11 +178,11 @@ public class GameEngine {
 	}
 
 	private void render(){
-		
+
 		theWorld.prepareForRender();
-		
+
 		guiManager.processGuis();
-		
+
 		renderer.render(new Vector4f(0, -1, 0, 10000000));
 		waterRenderer.render(theWorld.getWorldSun());
 	}

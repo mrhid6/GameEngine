@@ -3,10 +3,8 @@ package com.mrhid6.entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
-import com.mrhid6.asset.Asset;
 import com.mrhid6.asset.AssetLoader;
 import com.mrhid6.asset.PlayerAsset;
-import com.mrhid6.asset.loader.PlayerAssetLoader;
 import com.mrhid6.render.DisplayManager;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
@@ -26,26 +24,22 @@ public class Player extends Entity{
 	
 	private boolean inAir = false;
 	
-	private PlayerAsset playerAsset;
+	private PlayerAsset asset;
 	
 	public Player( Vector3f position, float rotX, float rotY, float rotZ, float scale) {
 		super(position, rotX, rotY, rotZ, scale);
 		
-		PlayerAssetLoader.loadAsset("player");
-		Asset pa = AssetLoader.getAsset("player");
-		
-		if(pa instanceof PlayerAsset){
-			setAsset((PlayerAsset)pa);
-		}
+		AssetLoader.loadAsset("player");
+		asset = (PlayerAsset) AssetLoader.getAsset("player");
 		
 	}
 	
-	public PlayerAsset getPlayerAsset() {
-		return playerAsset;
+	public PlayerAsset getAsset() {
+		return asset;
 	}
 	
 	public void setAsset(PlayerAsset playerAsset) {
-		this.playerAsset = playerAsset;
+		this.asset = playerAsset;
 	}
 	
 	public void move(){
@@ -56,6 +50,7 @@ public class Player extends Entity{
 		float distance = currentSpeed* DisplayManager.getFrameTimeSecond();
 		float dx = (float) (distance * Math.sin(Math.toRadians(super.getRotY())));
 		float dz = (float) (distance * Math.cos(Math.toRadians(super.getRotY())));
+		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSecond(), dz);
 		
 		upwardSpeed += GRAVITY * DisplayManager.getFrameTimeSecond();
 		
@@ -72,7 +67,6 @@ public class Player extends Entity{
 			upwardSpeed = 0;
 			inAir = false;
 		}
-		super.increasePosition(dx, upwardSpeed * DisplayManager.getFrameTimeSecond(), dz);
 		
 		
 	}

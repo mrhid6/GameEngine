@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector3f;
 
-import com.mrhid6.asset.loader.StaticWorldObjectAssetLoader;
+import com.mrhid6.asset.AssetLoader;
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Light;
 import com.mrhid6.entities.Player;
@@ -42,11 +42,11 @@ public class World {
 	public void initialize(){
 		Logger.info("Initialized");
 		
-		worldArea.initialize();
-		TerrainGrid.getInstance().generateTerrain();
-		
 		worldSun = new Light(new Vector3f(0, 1000, -700f), new Vector3f(0.6F, 0.6F, 0.6F));
 		MasterRenderer.getInstance().addLight(worldSun);
+		
+		worldArea.initialize();
+		TerrainGrid.getInstance().generateTerrain();
 		
 		loadPlayer();
 		loadDooDads();
@@ -68,7 +68,7 @@ public class World {
 				JSONObject worldObj = staticObjs.getJSONObject(key);
 				String assetName = worldObj.getString("name");
 				
-				StaticWorldObjectAssetLoader.loadAsset(assetName);
+				AssetLoader.loadAsset(assetName);
 				
 				float x = (float) worldObj.getDouble("x");
 				float y = (float) worldObj.getDouble("y");

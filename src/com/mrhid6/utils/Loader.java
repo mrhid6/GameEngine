@@ -1,6 +1,8 @@
 package com.mrhid6.utils;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +27,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 
 import com.mrhid6.models.RawModel;
 import com.mrhid6.render.ModelData;
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6.textures.TextureData;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -55,11 +58,8 @@ public class Loader {
 		return instance;
 	}
 
-	public JSONObject loadJSON(String JSONFile) throws IOException{
-
-		InputStream is = Class.class.getResourceAsStream(JSONFile);
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+	public JSONObject loadJSONFR(InputStream in) throws IOException{
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 		StringBuilder sb = new StringBuilder();
 		String line;
 		while ((line=reader.readLine())!=null) {
@@ -74,8 +74,21 @@ public class Loader {
 		return obj;
 	}
 
+	public JSONObject loadJSONFR(String JSONFile) throws IOException{
+		return loadJSONFR(new FileInputStream(JSONFile));
+	}
+
+	public JSONObject loadJSON(String JSONFile) throws IOException{
+
+		if(useInstallDir(JSONFile)){
+			JSONFile = GameSettings.INSTALLDIR + JSONFile;
+		}
+
+		return loadJSONFR(JSONFile);
+	}
+
 	public void loadToVAO(int vaoID, float[] positions, float[] textureCoords, float[] normals, int[] indices){
-		
+
 		GL30.glBindVertexArray(vaoID);
 		bindIndicesBuffer(indices);
 		storeDataInAttributeList(0, 3, positions);
@@ -122,13 +135,39 @@ public class Loader {
 		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
 
-	public RawModel loadObjAsset(String filename){
-		ModelData data = OBJFileLoader.loadOBJ(filename);
+	public RawModel loadObjAsset(InputStream in){
+		ModelData data = OBJFileLoader.loadOBJ(in);
 		RawModel rawModel = loadToVAO(data);
 
 		return rawModel;
 	}
 
+	public RawModel loadObjAsset(String filename){
+
+		InputStream in = null;
+
+		if(useInstallDir(filename)){
+			filename = GameSettings.INSTALLDIR + filename;
+			try {
+				in = new FileInputStream(filename);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}else{
+			in = Class.class.getResourceAsStream(filename);
+		}
+
+		return loadObjAsset(in);
+
+	}
+
+
+	public boolean useInstallDir(String Filename){
+		if(!Filename.startsWith("/textures") && !Filename.startsWith("/shader")){
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * 
@@ -137,13 +176,33 @@ public class Loader {
 	 */
 	public int loadTexture(String fileName){
 
+		if(useInstallDir(fileName)){
+			fileName = GameSettings.INSTALLDIR + fileName;
+		}
+
 		if(textures.containsKey(fileName)){
-			System.out.println("using cached taxture: "+fileName);
+			System.out.println("using cached texture: "+fileName);
 			return textures.get(fileName);
+		}else{
+			InputStream in = null;
+
+			try {
+				in = (useInstallDir(fileName))?new FileInputStream(fileName):Class.class.getResourceAsStream(fileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return loadTexture(fileName, in);
+		}
+	}
+
+	public int loadTexture(String identifier, InputStream in){
+		if(textures.containsKey(identifier)){
+			System.out.println("using cached texture: "+identifier);
+			return textures.get(identifier);
 		}else{
 			Texture texture = null;
 			try {
-				InputStream in = Class.class.getResourceAsStream(fileName);
 				texture = TextureLoader.getTexture("PNG", in);
 				GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 				GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -152,7 +211,7 @@ public class Loader {
 				e.printStackTrace();
 			}
 			int textureID = texture.getTextureID();
-			textures.put(fileName,textureID);
+			textures.put(identifier,textureID);
 
 			return textureID;
 		}
@@ -265,8 +324,13 @@ public class Loader {
 		int width = 0;
 		int height = 0;
 		ByteBuffer buffer = null;
+		
+		if(useInstallDir(fileName)){
+			fileName = GameSettings.INSTALLDIR + fileName;
+		}
+		
 		try {
-			InputStream in = Class.class.getResourceAsStream(fileName);
+			InputStream in = (useInstallDir(fileName))?new FileInputStream(fileName):Class.class.getResourceAsStream(fileName);
 			PNGDecoder decoder = new PNGDecoder(in);
 			width = decoder.getWidth();
 			height = decoder.getHeight();

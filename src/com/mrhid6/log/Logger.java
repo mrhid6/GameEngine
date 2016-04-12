@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6io.utils.Utils;
 
 public class Logger {
@@ -16,8 +17,8 @@ public class Logger {
 	private static File logFile;
 	
 	public Logger() {
-		logFolder = Utils.loadOrCreateDirectory("logs/");
-		logFile = Utils.loadOrCreateFile("logs/client.log");
+		logFolder = Utils.loadOrCreateDirectory(GameSettings.INSTALLDIR+"/logs/");
+		logFile = Utils.loadOrCreateFile(GameSettings.INSTALLDIR+"/logs/client.log");
 	}
 	
 	public static void info(String log_message){

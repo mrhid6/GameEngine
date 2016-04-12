@@ -2,7 +2,7 @@ package com.mrhid6.textures;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import com.mrhid6.render.DisplayManager;
+import com.mrhid6.settings.Constants;
 
 public class GuiTexture {
 	
@@ -15,8 +15,12 @@ public class GuiTexture {
 		super();
 		this.texture = texture;
 		
-		this.position = new Vector2f(-1.0f+(position.getX()/(float)DisplayManager.WIDTH), 1.0f+(-position.getY()/(float)DisplayManager.HEIGHT));
-		this.scale = new Vector2f(scale.getX()/(float)DisplayManager.WIDTH, scale.getY()/(float)DisplayManager.HEIGHT);
+		float screenWidth = (float) Constants.WIDTH;
+		float screenHeight = (float) Constants.HEIGHT;
+		
+		
+		this.position = new Vector2f(-1.0f+(position.getX()/screenWidth), 1.0f+(-position.getY()/screenHeight));
+		this.scale = new Vector2f(scale.getX()/screenWidth, scale.getY()/screenHeight);
 	}
 
 	public int getTexture() {

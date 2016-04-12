@@ -3,7 +3,9 @@ package com.mrhid6.terrians;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -12,6 +14,7 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.models.RawModel;
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6.textures.TerrianTexture;
 import com.mrhid6.textures.TerrianTexturePack;
 import com.mrhid6.utils.Loader;
@@ -45,7 +48,6 @@ public class Terrain {
 	private Vector3f reuseableV3f_3 = new Vector3f();
 
 	public Terrain(String chunkFile){
-		System.out.println("loading '"+chunkFile+"' using json..");
 		loadTerrainConfig(chunkFile);
 
 		this.x = gridX * SIZE;
@@ -144,7 +146,11 @@ public class Terrain {
 	private void generateHeights(){
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(Class.class.getResource(heightMap));
+			if(Loader.getInstance().useInstallDir(heightMap)){
+				heightMap = GameSettings.INSTALLDIR + heightMap;
+			}
+			InputStream in = (Loader.getInstance().useInstallDir(heightMap))?new FileInputStream(heightMap):Class.class.getResourceAsStream(heightMap);
+			image = ImageIO.read(in);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -274,16 +280,17 @@ public class Terrain {
 		int imageSize = heights.length;
 
 		if(x==0 || x==imageSize-1 || z==0 || z==imageSize-1){
+			float testHeight[][] = null;
 			if(x==0){
 				Terrain leftTerrain = TerrainGrid.getInstance().getTerrian(this.x-1, this.z);
 				if(leftTerrain!=null){
-					float testHeight[][] = leftTerrain.getHeights();
+					testHeight = leftTerrain.getHeights();
 					heightL=testHeight[imageSize-1][z];
 				}
 			}else if(x==imageSize-1){
 				Terrain rightTerrain = TerrainGrid.getInstance().getTerrian(this.x+SIZE+1, this.z);
 				if(rightTerrain!=null){
-					float testHeight[][] = rightTerrain.getHeights();
+					testHeight = rightTerrain.getHeights();
 					heightR=testHeight[0][z];
 				}
 			}
@@ -291,13 +298,13 @@ public class Terrain {
 			if(z==0){
 				Terrain topTerrain = TerrainGrid.getInstance().getTerrian(this.x, this.z-1);
 				if(topTerrain!=null){
-					float testHeight[][] = topTerrain.getHeights();
+					testHeight = topTerrain.getHeights();
 					heightD=testHeight[x][imageSize-1];
 				}
 			}else if(z==imageSize-1){
 				Terrain bottomTerrain = TerrainGrid.getInstance().getTerrian(this.x, this.z+SIZE+1);
 				if(bottomTerrain!=null){
-					float testHeight[][] = bottomTerrain.getHeights();
+					testHeight = bottomTerrain.getHeights();
 					heightU=testHeight[x][0];
 				}
 			}
