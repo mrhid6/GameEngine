@@ -11,6 +11,7 @@ import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.shaders.SkyboxShader;
 import com.mrhid6.utils.Loader;
+import com.mrhid6.world.World;
 import com.mrhid6.world.areas.WorldArea;
 
 public class SkyboxRenderer {
@@ -73,10 +74,12 @@ public class SkyboxRenderer {
 
 		String[] TEXTURE_FILES_DAY = new String[6];
 		String[] TEXTURE_FILES_NIGHT = new String[6];
-
+		
+		WorldArea area = World.getInstance().getWorldArea();
+		
 		for(int i=0;i<6;i++){
-			TEXTURE_FILES_DAY[i] = WorldArea.getAreaURL(1)+"/textures/skybox/day/"+(i+1)+".png";
-			TEXTURE_FILES_NIGHT[i] = WorldArea.getAreaURL(1)+"/textures/skybox/night/"+(i+1)+".png";
+			TEXTURE_FILES_DAY[i] = area.getAreaURL()+"/textures/skybox/day/"+(i+1)+".png";
+			TEXTURE_FILES_NIGHT[i] = area.getAreaURL()+"/textures/skybox/night/"+(i+1)+".png";
 		}
 
 		texture = loader.loadCubeMap(TEXTURE_FILES_DAY);

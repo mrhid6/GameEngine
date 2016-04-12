@@ -5,6 +5,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.entities.Camera;
 import com.mrhid6.render.DisplayManager;
+import com.mrhid6.settings.Constants;
 import com.mrhid6.utils.Maths;
 
 
@@ -12,8 +13,6 @@ public class SkyboxShader extends ShaderProgram{
 
 	private static final String VERTEX_FILE = "/shaders/skyboxVertexShader.glsl";
 	private static final String FRAGMENT_FILE = "/shaders/skyboxFragmentShader.glsl";
-	
-	private static final float ROTATE_SPEED = 0.25f;
 	
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
@@ -39,7 +38,7 @@ public class SkyboxShader extends ShaderProgram{
 		matrix.m30 = 0;
 		matrix.m31 = 0;
 		matrix.m32 = 0;
-		rotation += ROTATE_SPEED * DisplayManager.getFrameTimeSecond();
+		rotation += Constants.SKYBOX_ROTATE_SPEED * DisplayManager.getFrameTimeSecond();
 		reuseableV3f.set(0, 1, 0);
 		Matrix4f.rotate((float) Math.toRadians(rotation), reuseableV3f, matrix, matrix);
 		super.loadMatrix(location_viewMatrix, matrix);
