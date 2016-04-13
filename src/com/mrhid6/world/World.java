@@ -16,7 +16,6 @@ import com.mrhid6.log.Logger;
 import com.mrhid6.render.renderer.MasterRenderer;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
-import com.mrhid6.world.areas.WorldArea;
 
 public class World {
 	

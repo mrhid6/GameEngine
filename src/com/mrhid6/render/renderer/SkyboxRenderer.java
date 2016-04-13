@@ -12,7 +12,7 @@ import com.mrhid6.models.RawModel;
 import com.mrhid6.shaders.SkyboxShader;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.world.World;
-import com.mrhid6.world.areas.WorldArea;
+import com.mrhid6.world.WorldArea;
 
 public class SkyboxRenderer {
 

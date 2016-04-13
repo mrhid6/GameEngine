@@ -1,4 +1,4 @@
-package com.mrhid6.world.areas;
+package com.mrhid6.world;
 
 import java.io.IOException;
 
