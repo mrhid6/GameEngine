@@ -39,7 +39,7 @@ public class BrushMouseTool extends MouseTool {
 		}
 		
 		if(Mouse.isButtonDown(2)){
-			smoothTerrain(0.1f, raduis);
+			smoothTerrain(0.1f, raduis/3);
 		}
 	}
 
@@ -95,24 +95,24 @@ public class BrushMouseTool extends MouseTool {
 					
 					if(Math.sqrt(i * i + j * j)<=raduis){
 						if(x>=0 && z>=0 && x<heights.length && z<heights.length){
-							float heightTL = getHeight(heights, x-1, z-1);
+							//float heightTL = getHeight(heights, x-1, z-1);
 							float heightTM = getHeight(heights, x-1, z);
-							float heightTR = getHeight(heights, x-1, z+1);
+							//float heightTR = getHeight(heights, x-1, z+1);
 							float heightCL = getHeight(heights, x, z-1);
-							//float heightCM = getHeight(heights, x, z);
+							float heightCM = getHeight(heights, x, z);
 							float heightCR = getHeight(heights, x, z+1);
-							float heightBL = getHeight(heights, x+1, z-1);
+							//float heightBL = getHeight(heights, x+1, z-1);
 							float heightBM = getHeight(heights, x+1, z);
-							float heightBR = getHeight(heights, x+1, z+1);
+							//float heightBR = getHeight(heights, x+1, z+1);
 							
 							
 							//float prevHeight = heights[x][z];
-							float average = (heightTL + heightTM + heightTR + heightCL + heightCR + heightBL + heightBM + heightBR) / 8.0f;
+							float average = ( heightTM + heightCL + heightCR + heightBM + heightCM) / 5.0f;
 							/*float diff = prevHeight - average;*/
 							reuseableV3f.set(x*2, terrainPoint.y, z*2);
-							float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.001F;
+							//float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.1F;
 							
-							heights[x][z]=Maths.clampf(average+distance, 0, Terrain.MAX_HEIGHT*2);
+							heights[x][z]=Maths.clampf(average, 0, Terrain.MAX_HEIGHT*2);
 						}
 					}
 				}
