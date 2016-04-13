@@ -62,6 +62,10 @@ public class Launcher {
 		}
 	}
 	
+	public LauncherGUI getLauncherGui() {
+		return gui;
+	}
+	
 	private void createProgramDataDir(){
 		File dirFile = new File(ProgramDataDir);
 		
