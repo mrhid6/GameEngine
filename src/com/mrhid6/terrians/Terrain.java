@@ -13,15 +13,16 @@ import org.json.JSONObject;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import com.mrhid6.models.RawModel;
+import com.mrhid6.api.ICleanUpable;
+import com.mrhid6.models.TerrainModel;
 import com.mrhid6.settings.GameSettings;
 import com.mrhid6.textures.TerrianTexture;
 import com.mrhid6.textures.TerrianTexturePack;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.utils.Maths;
-import com.mrhid6.world.areas.WorldArea;
+import com.mrhid6.world.WorldArea;
 
-public class Terrain {
+public class Terrain implements ICleanUpable{
 
 	public static final float SIZE = 512;
 	public static final float  MAX_HEIGHT = 60;
@@ -30,7 +31,7 @@ public class Terrain {
 	private float x, z;
 	private int gridX, gridZ;
 
-	private RawModel model;
+	private TerrainModel model;
 	private TerrianTexturePack texturePack;
 
 	private float[][] heights;
@@ -96,7 +97,7 @@ public class Terrain {
 		return z;
 	}
 
-	public RawModel getModel() {
+	public TerrainModel getModel() {
 		return model;
 	}
 
@@ -263,10 +264,12 @@ public class Terrain {
 			}
 		}
 		if(firstTimeCreated){
-			this.model = Loader.getInstance().loadToVAO(vertices, textureCoords, normals, indices);
+			
+			this.model = new TerrainModel();
+			this.model.initialize(vertices, textureCoords, normals, indices);
 			firstTimeCreated = false;
 		}else{
-			Loader.getInstance().loadToVAO(model.getVaoID(), vertices, textureCoords, normals, indices);
+			model.updateTerrainModel(vertices, textureCoords, normals, indices);
 		}
 	}
 
@@ -389,6 +392,11 @@ public class Terrain {
 
 	public void setHeights(float[][] heights) {
 		this.heights = heights;
+	}
+
+	@Override
+	public void cleanUp() {
+		model.cleanUp();
 	}
 
 }

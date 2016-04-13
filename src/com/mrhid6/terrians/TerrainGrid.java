@@ -2,7 +2,9 @@ package com.mrhid6.terrians;
 
 import java.util.ArrayList;
 
-public class TerrainGrid {
+import com.mrhid6.api.ICleanUpable;
+
+public class TerrainGrid implements ICleanUpable{
 	
 	
 	private static TerrainGrid instance;
@@ -50,5 +52,13 @@ public class TerrainGrid {
 	
 	public ArrayList<Terrain> getTerrians() {
 		return terrians;
+	}
+	
+	@Override
+	public void cleanUp(){
+		for(int i=0;i<terrians.size();i++){
+			Terrain t = terrians.get(i);
+			t.cleanUp();
+		}
 	}
 }

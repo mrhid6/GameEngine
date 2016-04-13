@@ -9,7 +9,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.mrhid6.entities.Camera;
 import com.mrhid6.log.Logger;
-import com.mrhid6.models.RawModel;
+import com.mrhid6.models.TerrainModel;
 import com.mrhid6.shaders.TerrainShader;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
@@ -48,7 +48,7 @@ public class TerrainRenderer extends SubRenderer{
 	}
 	
 	private void prepareTerrian(Terrain terrian){
-		RawModel rawModel = terrian.getModel();
+		TerrainModel rawModel = terrian.getModel();
 		
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		
