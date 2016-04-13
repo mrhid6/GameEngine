@@ -192,6 +192,7 @@ public class GameEngine {
 			Logger.info("CleanUp Started");
 			waterRenderer.cleanUp();
 			renderer.cleanUp();
+			TerrainGrid.getInstance().cleanUp();
 			Loader.getInstance().cleanUp();
 			DisplayManager.closeDisplay();
 			Logger.info("CleanUp Finished");
