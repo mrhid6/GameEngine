@@ -92,7 +92,7 @@ public abstract class ShaderProgram {
 		GL20.glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 
-	protected void load2Vector(int location, Vector2f value){
+	protected void load2DVector(int location, Vector2f value){
 		GL20.glUniform2f(location, value.x, value.y);
 	}
 

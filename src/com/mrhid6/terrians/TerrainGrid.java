@@ -32,6 +32,7 @@ public class TerrainGrid implements ICleanUpable{
 	}
 	
 	public Terrain getTerrian(float x, float z){
+		
 		for(int i=0;i<terrians.size();i++){
 			Terrain t = terrians.get(i);
 			

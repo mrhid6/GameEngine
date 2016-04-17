@@ -34,6 +34,9 @@ public class Terrain implements ICleanUpable{
 	private TerrainModel model;
 	private TerrianTexturePack texturePack;
 
+	private float[][] groundClutter;
+	private String groundClutterMap;
+	
 	private float[][] heights;
 	private String heightMap;
 
@@ -55,6 +58,7 @@ public class Terrain implements ICleanUpable{
 		this.z = gridZ * SIZE;
 
 		generateHeights();
+		generateClutter();
 	}
 
 	private void loadTerrainConfig(String chunkFile){
@@ -83,6 +87,8 @@ public class Terrain implements ICleanUpable{
 			this.texturePack = ttp;
 
 			this.heightMap = terrainURL+"/"+jsonfile.getString("texture.height");
+			
+			groundClutterMap = terrainURL+"/"+jsonfile.getString("texture.splat");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -143,7 +149,42 @@ public class Terrain implements ICleanUpable{
 	public float[][] getHeights() {
 		return heights;
 	}
+	
+	public boolean canPlaceClutter(int x, int z){
+		
+		if(x<0 || x>=groundClutter.length || z<0 || z>=groundClutter.length){
+			return false;
+		}
+		
+		return (groundClutter[x][z]>120);
+	}
+	
+	private void generateClutter(){
+		BufferedImage image = null;
+		try {
+			if(Loader.getInstance().useInstallDir(groundClutterMap)){
+				groundClutterMap = GameSettings.INSTALLDIR + groundClutterMap;
+			}
+			InputStream in = (Loader.getInstance().useInstallDir(groundClutterMap))?new FileInputStream(groundClutterMap):Class.class.getResourceAsStream(groundClutterMap);
+			image = ImageIO.read(in);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
+		int ISIZE = image.getHeight();
+		
+		groundClutter = new float[ISIZE][ISIZE];
+		
+		for(int i=0;i<ISIZE;i++){
+			for(int j=0;j<ISIZE;j++){
+				float val = getClutterImage(j,i, image);
+				
+				groundClutter[j][i] = val;
+			}
+		}
+		
+	}
+	
 	private void generateHeights(){
 		BufferedImage image = null;
 		try {
@@ -326,7 +367,19 @@ public class Terrain implements ICleanUpable{
 
 		return heights[x][z];
 	}
+	
+	private float getClutterImage(int x, int z, BufferedImage image){
+		if(x<0 || x>=image.getHeight() || z<0 || z>=image.getHeight()){
+			return 0;
+		}
 
+		Color c = new Color(image.getRGB(x,z));
+
+		float val = c.getRed();
+		
+		return val;
+	}
+	
 	private float getHeightImage(int x, int z, BufferedImage image){
 		if(x<0 || x>=image.getHeight() || z<0 || z>=image.getHeight()){
 			return 0;

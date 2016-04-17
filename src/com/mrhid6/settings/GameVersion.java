@@ -1,4 +1,4 @@
-package com.mrhid6.engine.launcher;
+package com.mrhid6.settings;
 
 public class GameVersion {
 

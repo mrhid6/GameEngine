@@ -8,6 +8,8 @@ import java.io.IOException;
 import org.json.JSONObject;
 
 import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
+import com.mrhid6.settings.GameVersion;
 import com.mrhid6io.connection.PhpConnection;
 import com.mrhid6io.utils.Utils;
 
@@ -17,9 +19,6 @@ public class Launcher {
 	private boolean installNeeded = false;
 	
 	
-	private String ProgramDataDir = "";
-	
-	private static GameVersion currentVersion = new GameVersion("0.0.0");
 	private static GameVersion serverVersion = new GameVersion("0.0.0");
 	
 	private LauncherGUI gui;
@@ -28,12 +27,6 @@ public class Launcher {
 	
 	public Launcher() {
 		// Determine if new install/update or exisiting
-
-		if(Utils.isWindows()){
-			ProgramDataDir = System.getenv("ProgramData")+Constants.FS+Constants.TITLE;
-		}else if(Utils.isLinux()){
-			ProgramDataDir = "/etc/"+Constants.TITLE;
-		}
 		
 		checkIfInstallDirExists();
 		
@@ -50,10 +43,6 @@ public class Launcher {
 		return instance;
 	}
 	
-	public String getProgramDataDir() {
-		return ProgramDataDir;
-	}
-	
 	public void openLauncherGUI(){
 		try {
 			gui = new LauncherGUI();
@@ -67,7 +56,7 @@ public class Launcher {
 	}
 	
 	private void createProgramDataDir(){
-		File dirFile = new File(ProgramDataDir);
+		File dirFile = new File(GameSettings.PROGRAMDATADIR);
 		
 		if(!dirFile.exists()){
 			dirFile.mkdirs();
@@ -75,7 +64,7 @@ public class Launcher {
 	}
 	
 	private boolean checkProgramDataConf(){
-		String programdataConf = ProgramDataDir + Constants.FS + "config.json";
+		String programdataConf = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
 		File config = new File(programdataConf);
 		
 		if(!config.exists()){return false;}
@@ -84,7 +73,7 @@ public class Launcher {
 	}
 	
 	private String getProgramDataConfInstDir(){
-		String programdataConf = ProgramDataDir + Constants.FS + "config.json";
+		String programdataConf = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
 		
 		try {
 			JSONObject config = loadJSON(programdataConf);
@@ -139,10 +128,10 @@ public class Launcher {
 					// If config file exists load json file.
 					try {
 						config = loadJSON(CGFFile);
-						currentVersion = new GameVersion(config.getString("version"));
+						GameSettings.CURRENTVERSION = new GameVersion(config.getString("version"));
 						
 						
-						if(!currentVersion.equals(serverVersion)){
+						if(!GameSettings.CURRENTVERSION.equals(serverVersion)){
 							installNeeded = true;
 						}
 						
@@ -156,10 +145,6 @@ public class Launcher {
 
 			}
 		}
-	}
-	
-	public static GameVersion getCurrentVersion() {
-		return currentVersion;
 	}
 	
 	public static GameVersion getServerVersion() {

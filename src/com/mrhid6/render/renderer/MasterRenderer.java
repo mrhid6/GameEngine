@@ -13,15 +13,16 @@ import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
 import com.mrhid6.asset.PlayerAsset;
-import com.mrhid6.asset.StaticWorldObjectAsset;
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Entity;
 import com.mrhid6.entities.Light;
 import com.mrhid6.entities.Player;
 import com.mrhid6.entities.WorldObject;
+import com.mrhid6.font.TextMaster;
 import com.mrhid6.models.TexturedModel;
 import com.mrhid6.shaders.StaticShader;
 import com.mrhid6.textures.GuiTexture;
+import com.mrhid6.utils.Maths;
 import com.mrhid6.water.WaterFrameBuffers;
 import com.mrhid6.water.WaterTile;
 
@@ -46,12 +47,14 @@ public class MasterRenderer {
 	public Vector3f skyColor = new Vector3f(0.5444f, 0.62f, 0.69f);
 
 	private Map<TexturedModel,List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
-	private Map<TexturedModel,List<WorldObject>> worldObjects = new HashMap<TexturedModel, List<WorldObject>>();
+	private Map<String,List<WorldObject>> worldObjects = new HashMap<String, List<WorldObject>>();
 	private ArrayList<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	private ArrayList<Light> lights = new ArrayList<Light>();
 
 	private static MasterRenderer instance;
+	
+	private Vector4f reuseable4f = new Vector4f();
 
 	public MasterRenderer() {
 
@@ -85,11 +88,9 @@ public class MasterRenderer {
 		renderWaterFBO();
 
 		render3d(clipPlane);
-		render2d();
 
 		entities.clear();
 		worldObjects.clear();
-
 	}
 
 	public void render3d(Vector4f clipPlane){
@@ -114,43 +115,47 @@ public class MasterRenderer {
 
 	}
 
-	public Vector3f getSkyColor() {
-		return skyColor;
-	}
-
 	public void render2d(){
 		guiRenderer.render(guis);
-
 		guis.clear();
+		
+		TextMaster.render();
 	}
 
 	public void renderWaterFBO(){
 
 		Camera camera = Camera.getInstance();
-		
+
 		ArrayList<WaterTile> waters = WaterRenderer.getInstance().getWaters();
 
 		GL11.glEnable(GL30.GL_CLIP_DISTANCE0);
 
 		for(int i=0;i<waters.size();i++){
-			
+
 			WaterTile tile = waters.get(i);
 			WaterFrameBuffers waterFBOs = WaterRenderer.getInstance().getWaterFBOs().get(i);
-			
+
 			waterFBOs.bindReflectionFrameBuffer();
 			float distance = 2 * (camera.getPosition().y - tile.getPosition().getY());
 			camera.getPosition().y -= distance;
 			camera.invertPitch();
-			render3d(new Vector4f(0, 1, 0, -tile.getPosition().getY()+1f));
+			reuseable4f.set(0, 1, 0, -tile.getPosition().getY()+1f);
+			render3d(reuseable4f);
 			camera.getPosition().y += distance;
 			camera.invertPitch();
 
 
 			waterFBOs.bindRefractionFrameBuffer();
-			render3d(new Vector4f(0, -1, 0, tile.getPosition().getY()+1f));
+			reuseable4f.set(0, -1, 0, tile.getPosition().getY()+1f);
+			render3d(reuseable4f);
 			waterFBOs.unbindCurrentFrameBuffer();
 		}
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
+	}
+	
+
+	public Vector3f getSkyColor() {
+		return skyColor;
 	}
 
 	public void processGui(GuiTexture gui){
@@ -197,19 +202,24 @@ public class MasterRenderer {
 	}*/
 
 	public void processWorldObject(WorldObject object){
-		
 		if(object == null || object.getAsset() == null || object.getAsset().getModel() == null) return;
-		
-		StaticWorldObjectAsset objectAsset = object.getAsset();
-		TexturedModel entityModel = new TexturedModel(objectAsset.getModel(), objectAsset.getTexture());
-		List<WorldObject> batch = worldObjects.get(entityModel);
 
-		if(batch != null){
-			batch.add(object);
-		}else{
-			List<WorldObject> newBatch = new ArrayList<WorldObject>();
-			newBatch.add(object);
-			worldObjects.put(entityModel, newBatch);
+		float distance = Maths.distance(Camera.getInstance().getPosition(), object.getPosition());
+
+		if(distance <= object.getRenderDistance()){
+
+			//StaticWorldObjectAsset objectAsset = object.getAsset();
+			//TexturedModel entityModel = new TexturedModel(objectAsset.getModel(), objectAsset.getTexture());
+
+			List<WorldObject> batch = worldObjects.get(object.getName());
+
+			if(batch != null){
+				batch.add(object);
+			}else{
+				List<WorldObject> newBatch = new ArrayList<WorldObject>();
+				newBatch.add(object);
+				worldObjects.put(object.getName(), newBatch);
+			}
 		}
 	}
 

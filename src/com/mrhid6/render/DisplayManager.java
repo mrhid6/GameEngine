@@ -10,6 +10,7 @@ import org.lwjgl.opengl.PixelFormat;
 
 import com.mrhid6.log.Logger;
 import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
 
 public class DisplayManager {
 	
@@ -23,7 +24,7 @@ public class DisplayManager {
 		try {
 			Display.setDisplayMode(new DisplayMode(Constants.WIDTH, Constants.HEIGHT));
 			Display.create(new PixelFormat(4,4,4,4), attribs);
-			Display.setTitle(Constants.TITLE);
+			Display.setTitle(Constants.TITLE + " Alpha v"+GameSettings.CURRENTVERSION.displayVersion());
 			Logger.info("Display Created");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -42,6 +43,8 @@ public class DisplayManager {
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;
 		lastFrameTime = currentFrameTime;
+		
+		//System.out.println(1f/delta);
 	}
 
 	public static void closeDisplay(){

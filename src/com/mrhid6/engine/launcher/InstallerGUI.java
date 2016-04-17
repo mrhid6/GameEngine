@@ -17,6 +17,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
+import com.mrhid6.settings.GameVersion;
 import com.mrhid6io.utils.Utils;
 
 public class InstallerGUI extends JFrame{
@@ -92,7 +94,7 @@ public class InstallerGUI extends JFrame{
 		});
 		installButton.setBounds((Constants.INSTALLER_WIDTH/2)-60, (Constants.INSTALLER_HEIGHT-68), 100, 32);
 
-		GameVersion cv = Launcher.getCurrentVersion();
+		GameVersion cv = GameSettings.CURRENTVERSION;
 		GameVersion sv = Launcher.getServerVersion();
 
 		myversion = new JLabel("Current Version: " + cv.displayVersion());

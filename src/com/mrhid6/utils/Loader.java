@@ -81,6 +81,7 @@ public class Loader {
 	public JSONObject loadJSON(String JSONFile) throws IOException{
 
 		if(useInstallDir(JSONFile)){
+			JSONFile = JSONFile.replace(GameSettings.INSTALLDIR, "");
 			JSONFile = GameSettings.INSTALLDIR + JSONFile;
 		}
 
@@ -107,6 +108,16 @@ public class Loader {
 
 		unbindVAO();
 		return new RawModel(vaoID, indices.length);
+	}
+	
+	public int loadToVAO(float[] positions, float[] textureCoords){
+		
+		int vaoID = createVAO();
+		storeDataInAttributeList(0, 2, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		
+		unbindVAO();
+		return vaoID;
 	}
 
 	public RawModel loadToVAO(float[] positions, int dimensions){

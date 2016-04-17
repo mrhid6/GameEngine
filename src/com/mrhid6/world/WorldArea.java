@@ -13,8 +13,6 @@ public class WorldArea {
 	private int areaID = -1;
 	private String areaName = "";
 	
-	private boolean valid = false;
-	
 	public WorldArea(int areaID) {
 		this.areaID = areaID;
 		
@@ -47,20 +45,6 @@ public class WorldArea {
 	
 	public String getAreaName() {
 		return areaName;
-	}
-	
-	public void validate(){
-		if(areaID <=0 || areaName.equals("")){
-			valid = false;
-			return;
-		}
-		valid = true;
-	}
-	
-	public void checkValidArea() throws Exception{
-		if(valid == false){
-			throw new Exception("WorldArea Missing Component");
-		}
 	}
 	
 	public String getAreaURL(){

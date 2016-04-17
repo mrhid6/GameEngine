@@ -12,6 +12,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
 
 public class LauncherGUI extends JFrame{
 
@@ -32,7 +33,7 @@ public class LauncherGUI extends JFrame{
 		panel.setSize(getSize());
 		panel.setPreferredSize(getSize());
 
-		setTitle(Constants.TITLE + " Launcher");
+		setTitle(Constants.TITLE + " Launcher - v"+GameSettings.CURRENTVERSION.displayVersion());
 		setSize(800, 600);
 		setPreferredSize(getSize());
 		setResizable(false);

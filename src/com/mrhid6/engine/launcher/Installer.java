@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 
 import com.mrhid6.settings.Constants;
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6io.connection.PhpConnection;
 import com.mrhid6io.utils.Utils;
 
@@ -166,7 +167,7 @@ public class Installer {
 	private void createConfigFile(){
 
 		String configStr = installDir + Constants.FS + "config.json";
-		String progDataconfigstr = Launcher.getInstance().getProgramDataDir() + Constants.FS + "config.json";
+		String progDataconfigstr = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
 		
 		File configFile = Utils.loadOrCreateFile(configStr);
 		File progDataconfigFile = Utils.loadOrCreateFile(progDataconfigstr);

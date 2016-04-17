@@ -9,10 +9,11 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
+import com.mrhid6.asset.AssetLoader;
+import com.mrhid6.asset.StaticWorldObjectAsset;
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.WorldObject;
 import com.mrhid6.models.RawModel;
-import com.mrhid6.models.TexturedModel;
 import com.mrhid6.shaders.StaticShader;
 import com.mrhid6.textures.ModelTexture;
 import com.mrhid6.utils.Maths;
@@ -20,6 +21,8 @@ import com.mrhid6.utils.Maths;
 public class WorldObjectRenderer {
 	
 	private StaticShader shader;
+	
+	Matrix4f resueableMatrix4f = new Matrix4f();
 	
 	public WorldObjectRenderer(StaticShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
@@ -32,34 +35,37 @@ public class WorldObjectRenderer {
 	 * Prepares the screen for rendering
 	 */
 	
-	public void render(Map<TexturedModel, List<WorldObject>> worldObjs){
-		for(TexturedModel model : worldObjs.keySet()){
-			prepareTexturedModel(model);
-			List<WorldObject> batch = worldObjs.get(model);
+	public void render(Map<String, List<WorldObject>> worldObjects){
+		for(String assetName : worldObjects.keySet()){
 			
+			StaticWorldObjectAsset asset = (StaticWorldObjectAsset)AssetLoader.getAsset(assetName);
+			
+			prepareTexturedModel(asset.getModel(), asset.getTexture());
+			
+			List<WorldObject> batch = worldObjects.get(assetName);
+			int count = 0;
 			for(WorldObject entity: batch){
 				
 				float distance = Maths.distance(Camera.getInstance().getPosition(), entity.getPosition());
 				
 				if(distance <= entity.getRenderDistance()){
 					prepareInstance(entity);
-					GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+					GL11.glDrawElements(GL11.GL_TRIANGLES, asset.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 				}
+				count++;
 			}
-			
+			//System.out.println(count);
 			unbindTextureModel();
 		}
 	}
 	
-	private void prepareTexturedModel(TexturedModel model){
-		RawModel rawModel = model.getRawModel();
+	private void prepareTexturedModel(RawModel rawModel, ModelTexture texture){
 		
 		GL30.glBindVertexArray(rawModel.getVaoID());
 		
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
-		ModelTexture texture = model.getTexture();
 		
 		shader.loadNumberOfRows(texture.getNumberOfRows());
 		
@@ -70,7 +76,7 @@ public class WorldObjectRenderer {
 		shader.loadShineVaribles(texture.getShineDamper(), texture.getReflectivity());
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, model.getTexture().getID());
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
 	}
 	
 	private void unbindTextureModel(){
@@ -83,7 +89,7 @@ public class WorldObjectRenderer {
 	}
 	
 	private void prepareInstance(WorldObject worldObj){
-		Matrix4f transformationMatrix = Maths.createTransformationMatrix(worldObj.getPosition(), 
+		Matrix4f transformationMatrix = Maths.setTransformationMatrix(resueableMatrix4f,worldObj.getPosition(), 
 				worldObj.getRotX(), worldObj.getRotY(), worldObj.getRotZ(), worldObj.getScale());
 		
 		shader.loadTransformationMatrix(transformationMatrix);

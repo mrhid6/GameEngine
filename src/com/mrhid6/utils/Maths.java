@@ -9,7 +9,7 @@ import com.mrhid6.entities.Camera;
 public class Maths {
 
 	private static Vector3f reuseableV3f = new Vector3f();
-	
+
 	public static Matrix4f createTransformationMatrix(Vector2f translation, Vector2f scale) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.setIdentity();
@@ -59,7 +59,23 @@ public class Maths {
 		Matrix4f.rotate((float)Math.toRadians(rx), new Vector3f(1,0,0), matrix, matrix);
 		Matrix4f.rotate((float)Math.toRadians(ry), new Vector3f(0,1,0), matrix, matrix);
 		Matrix4f.rotate((float)Math.toRadians(rz), new Vector3f(0,0,1), matrix, matrix);
-		
+
+		reuseableV3f.set(scale, scale, scale);
+		Matrix4f.scale(reuseableV3f, matrix, matrix);
+
+		return matrix;
+	}
+	
+	public static Matrix4f setTransformationMatrix(Matrix4f matrix, Vector3f transformation, float rx, float ry, float rz, float scale){
+
+		matrix.setIdentity();
+
+		Matrix4f.translate(transformation, matrix, matrix);
+
+		Matrix4f.rotate((float)Math.toRadians(rx), new Vector3f(1,0,0), matrix, matrix);
+		Matrix4f.rotate((float)Math.toRadians(ry), new Vector3f(0,1,0), matrix, matrix);
+		Matrix4f.rotate((float)Math.toRadians(rz), new Vector3f(0,0,1), matrix, matrix);
+
 		reuseableV3f.set(scale, scale, scale);
 		Matrix4f.scale(reuseableV3f, matrix, matrix);
 
@@ -111,6 +127,19 @@ public class Maths {
 		value=Maths.maxf(value, max);
 		value=Maths.minf(value, min);
 		return value;
+	}
+
+	public static float randomInRange(float min, float max) {
+		return (float) (Math.random() < 0.5 ? ((1-Math.random()) * (max-min) + min) : (Math.random() * (max-min) + min));
+	}
+	
+	public static float[] matrix4fToFloatArray(Matrix4f m){
+		float[] v = {m.m00, m.m10, m.m20, m.m30,
+	             m.m01, m.m11, m.m21, m.m31,
+	             m.m02, m.m12, m.m22, m.m32,
+	             m.m03, m.m13, m.m23, m.m33};
+		
+		return v;
 	}
 
 }
