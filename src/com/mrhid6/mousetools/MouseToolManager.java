@@ -15,13 +15,6 @@ public class MouseToolManager {
 	}
 	
 	public void update(){
-		
-		//-- LOGIC
-		
-		
-		//-- Update CurrentTool
-		
-		
 		currentTool.update();
 	}
 	
@@ -32,5 +25,9 @@ public class MouseToolManager {
 	
 	public void setCurrentTool(MouseTool currentTool) {
 		this.currentTool = currentTool;
+	}
+	
+	public MouseTool getCurrentTool() {
+		return currentTool;
 	}
 }
