@@ -42,6 +42,7 @@ public class WaterRenderer {
 		shader.start();
 		shader.loadProjectionMatrix(projectionMatrix);
 		shader.connectTextureUnits();
+		shader.loadSkyColour(MasterRenderer.getInstance().getSkyColor());
 		shader.stop();
 		setUpVAO();
 		
@@ -53,6 +54,7 @@ public class WaterRenderer {
 		prepareRender(sun);
 		for (int i = 0;i<waters.size();i++) {
 			WaterTile tile = waters.get(i);
+			shader.loadTilingFactor(tile.getTiling());
 			bindTextures(i);
 			
 			Matrix4f modelMatrix = Maths.createTransformationMatrix(tile.getPosition(),tile.getScale());
