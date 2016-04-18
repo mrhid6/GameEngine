@@ -6,6 +6,7 @@ out vec4 clipSpace;
 out vec2 textureCoords;
 out vec3 toCameraVector;
 out vec3 fromLightVector;
+out float visibility;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -14,11 +15,15 @@ uniform vec3 lightPosition;
 
 uniform vec3 cameraPosition;
 
-const float tiling = 4.0;
+uniform float tiling;
+
+const float density = 0.0035;
+const float gradient = 5.0;
 
 void main(void) {
-
+	
 	vec4 worldPosition = modelMatrix * vec4(position.x, 0.0, position.y, 1.0);
+	vec4 positionRelativeToCam = viewMatrix * worldPosition;
 	
 	clipSpace = projectionMatrix * viewMatrix * worldPosition;
 	gl_Position = clipSpace;
@@ -27,5 +32,10 @@ void main(void) {
  	toCameraVector = cameraPosition - worldPosition.xyz;
  	fromLightVector = worldPosition.xyz - lightPosition;
  	
+ 	float distance = length(positionRelativeToCam.xyz);
+	
+	visibility = exp(-pow((distance*density),gradient));
+	
+	visibility = clamp(visibility,0.0,1.0);
  	
 }

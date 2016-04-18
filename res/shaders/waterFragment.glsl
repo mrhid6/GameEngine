@@ -4,6 +4,7 @@ in vec4 clipSpace;
 in vec2 textureCoords;
 in vec3 toCameraVector;
 in vec3 fromLightVector;
+in float visibility;
 
 out vec4 out_Color;
 
@@ -13,12 +14,15 @@ uniform sampler2D dudvMap;
 uniform sampler2D normalMap;
 uniform sampler2D depthMap;
 uniform vec3 lightColour;
+uniform vec3 skyColour;
 
 uniform float moveFactor;
 
 const float waveStrength = 0.04;
 const float shineDamper = 20.0;
-const float reflectivity = 0.5;
+const float reflectivity = 0.2;
+
+
 
 void main(void) {
 	
@@ -63,7 +67,8 @@ void main(void) {
 	vec3 specularHighlights = lightColour * specular * reflectivity * clamp(waterDepth / 5, 0.0, 1.0);
 	
 	out_Color = mix(reflectColour, refractColour, refractionFactor);
-	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 1.0), 0.2) + vec4(specularHighlights,0.0);
+	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 0.3), 0.2) + vec4(specularHighlights,0.0);
 	out_Color.a = clamp(waterDepth / 5.0, 0.0, 1.0);
+	out_Color = mix(vec4(skyColour,1.0),out_Color,visibility);
 
 }

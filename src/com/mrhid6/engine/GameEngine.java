@@ -44,14 +44,14 @@ public class GameEngine {
 		try{
 
 			if(checkInstall()){
-				
+
 				new Logger();
 				Logger.info("Initialized");
 
 				createDisplay();
-				
+
 				TextMaster.init();
-				
+
 				theWorld = new World();
 				renderer = new MasterRenderer();
 				new TerrainGrid();
@@ -62,7 +62,7 @@ public class GameEngine {
 
 				theWorld.initialize();
 				picker.initialize();
-				
+
 				loadAssets();
 			}
 		}catch(Exception e){
@@ -94,7 +94,7 @@ public class GameEngine {
 	private boolean checkProgramDataConf(){
 		String programdataConf = GameSettings.PROGRAMDATADIR + Constants.FS + "config.json";
 		File config = new File(programdataConf);
-		
+
 		String installdirConf = GameSettings.INSTALLDIR + Constants.FS + "config.json";
 		File config2 = new File(installdirConf);
 
@@ -104,7 +104,7 @@ public class GameEngine {
 		return true;
 	}
 
-	
+
 
 	private void createDisplay(){
 		DisplayManager.createDisplay();
@@ -117,8 +117,8 @@ public class GameEngine {
 		renderer.addLight(new Light(new Vector3f(400, 30, 50), new Vector3f(10, 0, 0), new Vector3f(1, 0.01F, 0.009F)));
 		renderer.addLight(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
 
-		waterRenderer.processWater(new WaterTile(new Vector3f(354, 5, 15), new Vector3f(65,65,35)));
-		waterRenderer.processWater(new WaterTile(new Vector3f(0, 10, 15), new Vector3f(65,65,35)));
+		waterRenderer.processWater(new WaterTile(new Vector3f(25, 76, 15), new Vector3f(50,50,50)));
+		waterRenderer.processWater(new WaterTile(new Vector3f(354, 68, 0), new Vector3f(65,65,65)));
 
 	}
 	// ################################ END ################################
@@ -168,7 +168,7 @@ public class GameEngine {
 
 		mouseManager.update();
 		Input.update();
-		
+
 		guiManager.update();
 	}
 
@@ -180,8 +180,8 @@ public class GameEngine {
 
 		renderer.render(new Vector4f(0, -1, 0, 10000000));
 		waterRenderer.render(theWorld.getWorldSun());
-		
-		
+
+
 		renderer.render2d();
 	}
 
@@ -192,10 +192,10 @@ public class GameEngine {
 			renderer.cleanUp();
 			TerrainGrid.getInstance().cleanUp();
 			TextMaster.cleanUp();
-			
+
 			Loader.getInstance().cleanUp();
 			DisplayManager.closeDisplay();
-			
+
 			Logger.info("CleanUp Finished");
 		}catch(Exception e){
 			e.printStackTrace();

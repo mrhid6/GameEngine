@@ -13,8 +13,8 @@ import com.mrhid6.settings.Constants;
 
 public class WaterFrameBuffers {
 
-	protected static final int REFLECTION_WIDTH = Constants.WIDTH / 4;
-	private static final int REFLECTION_HEIGHT = Constants.HEIGHT / 4;
+	protected static final int REFLECTION_WIDTH = Constants.WIDTH / 2;
+	private static final int REFLECTION_HEIGHT = Constants.HEIGHT / 2;
 	
 	protected static final int REFRACTION_WIDTH = Constants.WIDTH;
 	private static final int REFRACTION_HEIGHT = Constants.HEIGHT;
