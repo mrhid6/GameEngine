@@ -3,6 +3,7 @@ package com.mrhid6.entities;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.mrhid6.mousetools.MouseToolManager;
 import com.mrhid6.render.DisplayManager;
 
 public class Camera {
@@ -161,14 +162,14 @@ public class Camera {
 	}
 
 	private void calculatePitch(){
-		if(Mouse.isButtonDown(1)){
+		if(Mouse.isButtonDown(1) && MouseToolManager.getInstance().getCurrentTool() == MouseToolManager.STANDARD_MOUSE ){
 			float pitchChange = Mouse.getDY() * 0.1f;
 			pitch -= pitchChange;
 		}
 	}
 
 	private void calculateAngleAroundPlayer(){
-		if(Mouse.isButtonDown(1)){
+		if(Mouse.isButtonDown(1) && MouseToolManager.getInstance().getCurrentTool() == MouseToolManager.STANDARD_MOUSE){
 			float angleChange= Mouse.getDX() * 0.3f;
 			angleAroundPlayer -= angleChange;
 			angleAroundPlayer = angleAroundPlayer%360;

@@ -89,7 +89,7 @@ public class BrushMouseTool extends MouseTool {
 
 		if(terrainPoint !=null){
 			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);
-			if(terrainPoint !=null){
+			if(t !=null){
 				float[][] heights = t.getHeights();
 
 				for(int i=-raduis;i<=raduis;i++){
