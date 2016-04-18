@@ -141,5 +141,11 @@ public class Maths {
 		
 		return v;
 	}
+	
+	public static void floatArrayToSysout(float[] data){
+		for(int i =0;i<data.length;i++){
+			System.out.println("index="+i+", data="+data[i]);
+		}
+	}
 
 }

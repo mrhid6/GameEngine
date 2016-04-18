@@ -43,7 +43,6 @@ public class WorldObjectRenderer {
 			prepareTexturedModel(asset.getModel(), asset.getTexture());
 			
 			List<WorldObject> batch = worldObjects.get(assetName);
-			int count = 0;
 			for(WorldObject entity: batch){
 				
 				float distance = Maths.distance(Camera.getInstance().getPosition(), entity.getPosition());
@@ -52,9 +51,7 @@ public class WorldObjectRenderer {
 					prepareInstance(entity);
 					GL11.glDrawElements(GL11.GL_TRIANGLES, asset.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 				}
-				count++;
 			}
-			//System.out.println(count);
 			unbindTextureModel();
 		}
 	}

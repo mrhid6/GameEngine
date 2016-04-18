@@ -19,6 +19,7 @@ import com.mrhid6.render.renderer.MasterRenderer;
 import com.mrhid6.render.renderer.WaterRenderer;
 import com.mrhid6.settings.Constants;
 import com.mrhid6.settings.GameSettings;
+import com.mrhid6.skill.Skill;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.utils.MousePicker;
@@ -61,7 +62,7 @@ public class GameEngine {
 
 				theWorld.initialize();
 				picker.initialize();
-
+				
 				loadAssets();
 			}
 		}catch(Exception e){
@@ -155,8 +156,7 @@ public class GameEngine {
 		}
 
 		if (Input.getKeyUp(Input.KEY_F12)){
-			Vector3f playerPos = theWorld.getWorldPlayer().getPosition();
-			System.out.println("x:"+playerPos.getX()+" y:"+playerPos.getY()+" z:"+playerPos.getZ());
+			new Skill();
 		}
 
 		if (Input.getKeyUp(Input.KEY_1)){
@@ -168,6 +168,8 @@ public class GameEngine {
 
 		mouseManager.update();
 		Input.update();
+		
+		guiManager.update();
 	}
 
 	private void render(){

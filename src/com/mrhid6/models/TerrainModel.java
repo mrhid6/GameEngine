@@ -46,7 +46,6 @@ public class TerrainModel implements ICleanUpable{
 			vertexCount = indices.length;
 			
 			initialzied = true;
-			System.out.println(indices.length);
 		}
 	}
 	
