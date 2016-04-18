@@ -392,7 +392,7 @@ public class Terrain implements ICleanUpable{
 		height+= MAX_PIXLE_COLOUR / 2f;
 		height /= MAX_PIXLE_COLOUR / 2f;
 
-		height *= MAX_HEIGHT/2;
+		height *= MAX_HEIGHT;
 		height -=60.00f;
 
 		return height;
@@ -407,7 +407,7 @@ public class Terrain implements ICleanUpable{
 		float height = heights[x][z];
 		height +=60.00f;
 
-		height /= MAX_HEIGHT/2;
+		height /= MAX_HEIGHT;
 		height*= MAX_PIXLE_COLOUR / 2f;
 		height -= MAX_PIXLE_COLOUR / 2f;
 
@@ -424,8 +424,8 @@ public class Terrain implements ICleanUpable{
 
 			for(int i=0;i<heights.length;i++){
 				for(int j=0;j<heights.length;j++){
-
-					float c = Maths.clampf(getSaveHeight(j, i)/255, 0.0f, 1.0f);
+					float height = getSaveHeight(j, i);
+					float c = Maths.clampf(height/255, 0.0f, 1.0f);
 					Color col = new Color(c,c,c);
 					img.setRGB(j, i, col.getRGB());
 				}
