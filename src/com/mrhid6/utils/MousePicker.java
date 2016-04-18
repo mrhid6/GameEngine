@@ -11,6 +11,7 @@ import com.mrhid6.entities.Camera;
 import com.mrhid6.render.renderer.MasterRenderer;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
+import com.mrhid6.world.World;
 
 public class MousePicker {
 
@@ -131,7 +132,13 @@ public class MousePicker {
 	}
 
 	private Terrain getTerrain(float worldX, float worldZ) {
-		return TerrainGrid.getInstance().getTerrian(worldX, worldZ);
+		Terrain t = TerrainGrid.getInstance().getTerrian(worldX, worldZ);
+		
+		if(t == null){
+			Vector3f pos = World.getInstance().getWorldPlayer().getPosition();
+			t = TerrainGrid.getInstance().getTerrian(pos.getX(), pos.getZ());
+		}
+		return t;
 	}
 
 }

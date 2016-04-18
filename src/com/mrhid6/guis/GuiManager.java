@@ -10,9 +10,12 @@ public class GuiManager {
 	
 	private ArrayList<GuiBasic> guis = new ArrayList<GuiBasic>();
 	
+	private GuiDebug debugScreen;
+	
 	public GuiManager() {
 		
 		guis.add(new GuiHealthBar());
+		debugScreen = new GuiDebug();
 		
 		instance = this;
 	}
@@ -33,6 +36,14 @@ public class GuiManager {
 			GuiBasic t = guis.get(i);
 			renderer.processGui(t.getTexture());
 		}
+	}
+	
+	public GuiDebug getDebugScreen() {
+		return debugScreen;
+	}
+	
+	public void update(){
+		debugScreen.update();
 	}
 	
 }

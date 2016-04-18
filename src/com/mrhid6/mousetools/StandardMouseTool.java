@@ -22,4 +22,9 @@ public class StandardMouseTool extends MouseTool{
 		}
 
 	}
+
+	@Override
+	public String getToolName() {
+		return "Standard Tool";
+	}
 }
