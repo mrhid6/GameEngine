@@ -22,7 +22,7 @@ public class MetaFile {
 	private static final int PAD_BOTTOM = 2;
 	private static final int PAD_RIGHT = 3;
 
-	private static final int DESIRED_PADDING = 3;
+	private static final int DESIRED_PADDING = 4;
 
 	private static final String SPLITTER = " ";
 	private static final String NUMBER_SEPARATOR = ",";
@@ -40,7 +40,7 @@ public class MetaFile {
 
 	private BufferedReader reader;
 	private Map<String, String> values = new HashMap<String, String>();
-
+	
 	/**
 	 * Opens a font file in preparation for reading.
 	 * 
@@ -75,6 +75,9 @@ public class MetaFile {
 		String line = null;
 		try {
 			line = reader.readLine();
+			if(line !=null){
+				line = line.replace("   ", " ").replace("  ", " ");
+			}
 		} catch (IOException e1) {
 		}
 		if (line == null) {
@@ -98,7 +101,9 @@ public class MetaFile {
 	 * @return The value of the variable.
 	 */
 	private int getValueOfVariable(String variable) {
-		return Integer.parseInt(values.get(variable));
+		
+		String v = values.get(variable);
+		return Integer.parseInt(v);
 	}
 
 	/**

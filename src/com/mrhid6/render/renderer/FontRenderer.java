@@ -46,12 +46,12 @@ public class FontRenderer {
 	}
 	
 	private void renderText(GUIText text){
-		GL30.glBindVertexArray(text.getMesh());
+		GL30.glBindVertexArray(text.getModel().getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		GL20.glEnableVertexAttribArray(1);
 		shader.loadColour(text.getColour());
 		shader.loadTranslation(text.getPosition());
-		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getVertexCount());
+		GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, text.getModel().getVertexCount());
 		
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);

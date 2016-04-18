@@ -16,8 +16,6 @@ public class GUIText {
 	private String textString;
 	private float fontSize;
 
-	private int textMeshVao;
-	private int vertexCount;
 	private Vector3f colour = new Vector3f(0f, 0f, 0f);
 
 	private Vector2f position;
@@ -27,6 +25,8 @@ public class GUIText {
 	private FontType font;
 
 	private boolean centerText = false;
+	
+	private TextModel model;
 
 	/**
 	 * Creates a new text, loads the text's quads into a VAO, and adds the text
@@ -96,6 +96,10 @@ public class GUIText {
 	public void setColour(float r, float g, float b) {
 		colour.set(r, g, b);
 	}
+	
+	public TextModel getModel() {
+		return model;
+	}
 
 	/**
 	 * @return the colour of the text.
@@ -120,35 +124,6 @@ public class GUIText {
 	 */
 	public Vector2f getPosition() {
 		return position;
-	}
-
-	/**
-	 * @return the ID of the text's VAO, which contains all the vertex data for
-	 *         the quads on which the text will be rendered.
-	 */
-	public int getMesh() {
-		return textMeshVao;
-	}
-
-	/**
-	 * Set the VAO and vertex count for this text.
-	 * 
-	 * @param vao
-	 *            - the VAO containing all the vertex data for the quads on
-	 *            which the text will be rendered.
-	 * @param verticesCount
-	 *            - the total number of vertices in all of the quads.
-	 */
-	public void setMeshInfo(int vao, int verticesCount) {
-		this.textMeshVao = vao;
-		this.vertexCount = verticesCount;
-	}
-
-	/**
-	 * @return The total number of vertices of all the text's quads.
-	 */
-	public int getVertexCount() {
-		return this.vertexCount;
 	}
 
 	/**
@@ -185,8 +160,17 @@ public class GUIText {
 	/**
 	 * @return The string of text.
 	 */
-	protected String getTextString() {
+	public String getTextString() {
 		return textString;
 	}
+	
+	public void setTextString(String textString) {
+		this.textString = textString;
+	}
 
+	public void setTextModel(TextModel model) {
+		this.model = model;
+	}
+
+	
 }
