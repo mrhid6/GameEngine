@@ -13,11 +13,13 @@ import com.mrhid6.entities.Player;
 import com.mrhid6.entities.WorldObject;
 import com.mrhid6.log.Logger;
 import com.mrhid6.render.renderer.MasterRenderer;
+import com.mrhid6.render.renderer.WaterRenderer;
 import com.mrhid6.settings.GameSettings;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.utils.Maths;
+import com.mrhid6.water.WaterTile;
 
 public class World {
 
@@ -43,7 +45,7 @@ public class World {
 	public void initialize(){
 		Logger.info("Initialized");
 
-		worldSun = new Light(new Vector3f(0, 1000, -700f), new Vector3f(0.6F, 0.6F, 0.6F));
+		worldSun = new Light(new Vector3f(0, 1000000, -700f), new Vector3f(0.7F, 0.7F, 0.7F));
 		MasterRenderer.getInstance().addLight(worldSun);
 
 		worldArea.initialize();
@@ -63,27 +65,58 @@ public class World {
 		try {
 			JSONObject jsonfile = Loader.getInstance().loadJSON(configFile);
 			JSONArray worldObjs = jsonfile.getJSONArray("WorldObjects");
+			
 			JSONObject staticObjs = worldObjs.getJSONObject(0).getJSONObject("static");
-
-			for(int i=0;i<staticObjs.length();i++){
-				String key = staticObjs.names().get(i).toString();
-				JSONObject worldObj = staticObjs.getJSONObject(key);
-				String assetName = worldObj.getString("name");
-
-				AssetLoader.loadAsset(assetName);
-
-				float x = (float) worldObj.getDouble("x");
-				float y = (float) worldObj.getDouble("y");
-				float z = (float) worldObj.getDouble("z");
-
-				this.worldObjs.add(new WorldObject(assetName, new Vector3f(x, y, z), 0, 0, 0, 2));
-			}
+			JSONObject animatedObjs = worldObjs.getJSONObject(0).getJSONObject("animated");
+			
+			JSONObject waterObjs = jsonfile.getJSONObject("Water");
+			
+			loadDooDads_StaticObjects(staticObjs);
+			loadDooDads_AnimatedObjects(animatedObjs);
+			loadDooDads_Waters(waterObjs);
 
 			Logger.info("Finished Loading Doodads");
 
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private void loadDooDads_StaticObjects(JSONObject staticObjs){
+		for(int i=0;i<staticObjs.length();i++){
+			String key = staticObjs.names().get(i).toString();
+			JSONObject worldObj = staticObjs.getJSONObject(key);
+			String assetName = worldObj.getString("name");
+
+			AssetLoader.loadAsset(assetName);
+
+			float x = (float) worldObj.getDouble("x");
+			float y = (float) worldObj.getDouble("y");
+			float z = (float) worldObj.getDouble("z");
+
+			this.worldObjs.add(new WorldObject(assetName, new Vector3f(x, y, z), 0, 0, 0, 2));
+		}
+	}
+	
+	private void loadDooDads_AnimatedObjects(JSONObject animatedObjs){
+		
+	}
+	
+	private void loadDooDads_Waters(JSONObject waterObjs){
+		
+		for(int i=0;i<waterObjs.length();i++){
+			
+			String key = waterObjs.names().get(i).toString();
+			JSONObject worldObj = waterObjs.getJSONObject(key);
+
+			float x = (float) worldObj.getDouble("x");
+			float y = (float) worldObj.getDouble("y");
+			float z = (float) worldObj.getDouble("z");
+			float scale = (float) worldObj.getDouble("scale");
+			
+			WaterTile water = new WaterTile(new Vector3f(x, y, z), new Vector3f(scale,scale,scale));
+			WaterRenderer.getInstance().processWater(water);
 		}
 	}
 
@@ -123,8 +156,12 @@ public class World {
 
 	private void loadPlayer(){
 		Logger.info("Loading Player");
-		worldPlayer = new Player(new Vector3f(0, 0, 0), 0, 70, 0, 1);
+		worldPlayer = new Player(new Vector3f(120.14f, 76.90f, 62.22f), 0, 81.84f, 0);
 		worldCamera = new Camera(worldPlayer);
+		worldCamera.setPitch(26);
+		
+		MasterRenderer.getInstance().processAnimatedEntity(worldPlayer);
+		
 		Logger.info("Finished Loading Player");
 	}
 
@@ -132,7 +169,7 @@ public class World {
 		for(WorldObject worldObj : worldObjs){
 			MasterRenderer.getInstance().processWorldObject(worldObj);
 		}
-		MasterRenderer.getInstance().processPlayer(worldPlayer);
+		//MasterRenderer.getInstance().processPlayer(worldPlayer);
 	}
 
 	public static World getInstance() {

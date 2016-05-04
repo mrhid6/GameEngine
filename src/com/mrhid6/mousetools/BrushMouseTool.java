@@ -30,7 +30,7 @@ public class BrushMouseTool extends MouseTool {
 			raduis = (int) Maths.maxf(raduis, 15.0f);
 			System.out.println(raduis);
 		}
-
+		
 		if(Mouse.isButtonDown(0)){
 			adjustTerrainHeight(0.1F, raduis);
 		}
@@ -48,92 +48,110 @@ public class BrushMouseTool extends MouseTool {
 		MousePicker picker = GameEngine.getInstance().getPicker();
 		picker.update();
 		Vector3f terrainPoint = picker.getCurrentTerrainPoint();
-
+		
+		boolean generateNeeded = false;
+		
 		if(terrainPoint !=null){
+			
+			for(int i=-raduis;i<=raduis;i++){
+				for(int j=-raduis;j<=raduis;j++){
+					if(Math.sqrt(i * i + j * j)<=raduis){
+						
+						float x = terrainPoint.x + (i * 2);
+						float z = terrainPoint.z + (j * 2);
+						
+						Terrain t = TerrainGrid.getInstance().getTerrian(x, z);
+						if( t != null){
+							
+							float relX = x - t.getX();
+							float relZ = z - t.getZ();
+							
+							int intX = (int) relX / 2;
+							int intZ = (int) relZ / 2;
+							
+							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE/2) && intZ<(Terrain.SIZE/2)){
+								
+								float[][] heights = t.getHeights();
+								
+								float prevHeight = heights[intX][intZ];
 
-			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);
-			if( t != null){
-				float[][] heights = t.getHeights();
-
-				for(int i=-raduis;i<=raduis;i++){
-					for(int j=-raduis;j<=raduis;j++){
-
-						int x = i+((int)terrainPoint.x/2);
-						int z = j+((int)terrainPoint.z/2);
-
-						if(Math.sqrt(i * i + j * j)<=raduis){
-							if(x>=0 && z>=0 && x<heights.length && z<heights.length){
-								float prevHeight = heights[x][z];
-
-								reuseableV3f.set(x*2, terrainPoint.y, z*2);
+								reuseableV3f.set(x, terrainPoint.y, z);
 								float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.1F;
 								float newAmount =(amount>0)?Maths.clampf((amount-distance), 0F, 1F):Maths.clampf((amount+distance), -1F, 0F);
 
 								float newheight=prevHeight+newAmount;
-								heights[x][z] = heights[x][z]=Maths.clampf(newheight, 0, Terrain.MAX_HEIGHT*2);;
+								heights[intX][intZ] = heights[intX][intZ]=Maths.clampf(newheight, 0, Terrain.MAX_HEIGHT*2);
+								
+								t.setHeights(heights);
+								generateNeeded = true;
 							}
+							
 						}
+						
 					}
 				}
-
-				t.setHeights(heights);
-				t.generateTerrain();
 			}
+			
+			if(generateNeeded){
+				TerrainGrid.getInstance().generateTerrain();
+			}
+			
 		}
 	}
 
 	private void smoothTerrain(float amount, int raduis){
 		MousePicker picker = GameEngine.getInstance().getPicker();
+		TerrainGrid tg = TerrainGrid.getInstance();
+		
 		picker.update();
 		Vector3f terrainPoint = picker.getCurrentTerrainPoint();
-
+		boolean generateNeeded = false;
+		
 		if(terrainPoint !=null){
-			Terrain t = TerrainGrid.getInstance().getTerrian(terrainPoint.x, terrainPoint.z);
-			if(t !=null){
-				float[][] heights = t.getHeights();
-
-				for(int i=-raduis;i<=raduis;i++){
-					for(int j=-raduis;j<=raduis;j++){
-
-						int x = i+((int)terrainPoint.x/2);
-						int z = j+((int)terrainPoint.z/2);
-
-						if(Math.sqrt(i * i + j * j)<=raduis){
-							if(x>=0 && z>=0 && x<heights.length && z<heights.length){
-								//float heightTL = getHeight(heights, x-1, z-1);
-								float heightTM = getHeight(heights, x-1, z);
-								//float heightTR = getHeight(heights, x-1, z+1);
-								float heightCL = getHeight(heights, x, z-1);
-								float heightCM = getHeight(heights, x, z);
-								float heightCR = getHeight(heights, x, z+1);
-								//float heightBL = getHeight(heights, x+1, z-1);
-								float heightBM = getHeight(heights, x+1, z);
-								//float heightBR = getHeight(heights, x+1, z+1);
-
-
-								//float prevHeight = heights[x][z];
-								float average = ( heightTM + heightCL + heightCR + heightBM + heightCM) / 5.0f;
-								/*float diff = prevHeight - average;*/
-								reuseableV3f.set(x*2, terrainPoint.y, z*2);
-								//float distance = (Maths.distance(terrainPoint, reuseableV3f)/raduis)*0.1F;
-
-								heights[x][z]=Maths.clampf(average, 0, Terrain.MAX_HEIGHT*2);
+			
+			for(int i=-raduis;i<=raduis;i++){
+				for(int j=-raduis;j<=raduis;j++){
+					if(Math.sqrt(i * i + j * j)<=raduis){
+						
+						float x = terrainPoint.x + (i * 2);
+						float z = terrainPoint.z + (j * 2);
+						
+						
+						
+						float heightTM = tg.getHeight(x-2, z);
+						float heightCL = tg.getHeight(x, z-2);
+						float heightCM = tg.getHeight(x, z);
+						float heightCR = tg.getHeight(x, z+2);
+						float heightBM = tg.getHeight(x+2, z);
+						
+						float average = ( heightTM + heightCL + heightCR + heightBM + heightCM) / 5.0f;
+						
+						Terrain t = TerrainGrid.getInstance().getTerrian(x, z);
+						if( t != null){
+							t.restitchTerrain();
+							
+							float relX = x - t.getX();
+							float relZ = z - t.getZ();
+							
+							int intX = (int) relX / 2;
+							int intZ = (int) relZ / 2;
+							
+							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE/2) && intZ<(Terrain.SIZE/2)){
+								float[][] heights = t.getHeights();
+						
+								heights[intX][intZ]=Maths.clampf(average, 0, Terrain.MAX_HEIGHT*2);
+								t.setHeights(heights);
+								generateNeeded = true;
 							}
 						}
 					}
 				}
-				t.setHeights(heights);
-				t.generateTerrain();
+			}
+			
+			if(generateNeeded){
+				TerrainGrid.getInstance().generateTerrain();
 			}
 		}
-	}
-
-	private float getHeight(float[][] heights, int x, int z){
-		if(x<0 || x>=heights.length || z<0 || z>=heights.length){
-			return 0;
-		}
-
-		return heights[x][z];
 	}
 
 

@@ -12,14 +12,16 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-import com.mrhid6.asset.PlayerAsset;
+import com.mrhid6.entities.AnimatedEntity;
+import com.mrhid6.entities.AnimatedPlayer;
+import com.mrhid6.entities.AnimatedWorldObject;
 import com.mrhid6.entities.Camera;
 import com.mrhid6.entities.Entity;
 import com.mrhid6.entities.Light;
-import com.mrhid6.entities.Player;
 import com.mrhid6.entities.WorldObject;
 import com.mrhid6.font.TextMaster;
 import com.mrhid6.models.TexturedModel;
+import com.mrhid6.settings.GameSettings;
 import com.mrhid6.shaders.StaticShader;
 import com.mrhid6.textures.GuiTexture;
 import com.mrhid6.utils.Maths;
@@ -48,13 +50,17 @@ public class MasterRenderer {
 
 	private Map<TexturedModel,List<Entity>> entities = new HashMap<TexturedModel, List<Entity>>();
 	private Map<String,List<WorldObject>> worldObjects = new HashMap<String, List<WorldObject>>();
+	private Map<String,List<AnimatedWorldObject>> animatedWorldObjects = new HashMap<String, List<AnimatedWorldObject>>();
+	private Map<String,List<AnimatedEntity>> animatedEntities = new HashMap<String, List<AnimatedEntity>>();
 	private ArrayList<GuiTexture> guis = new ArrayList<GuiTexture>();
 
 	private ArrayList<Light> lights = new ArrayList<Light>();
 
 	private static MasterRenderer instance;
-	
+
 	private Vector4f reuseable4f = new Vector4f();
+	private AnimatedWorldObjectRenderer animatedWorldObjRenderer;
+	private AnimatedEntityRenderer animatedEntityRenderer;
 
 	public MasterRenderer() {
 
@@ -63,6 +69,8 @@ public class MasterRenderer {
 
 		entityRenderer = new EntityRenderer(shader, projectionMatrix);
 		worldObjRenderer = new WorldObjectRenderer(shader, projectionMatrix);
+		animatedWorldObjRenderer = new AnimatedWorldObjectRenderer(projectionMatrix);
+		animatedEntityRenderer = new AnimatedEntityRenderer(projectionMatrix);
 		terrianRenderer = new TerrainRenderer(projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(projectionMatrix);
 		guiRenderer = new GuiRenderer();
@@ -106,8 +114,13 @@ public class MasterRenderer {
 		entityRenderer.render(entities);
 		worldObjRenderer.render(worldObjects);
 		shader.stop();
-
-
+		
+		animatedWorldObjRenderer.setClipPlane(clipPlane);
+		animatedWorldObjRenderer.render(animatedWorldObjects);
+		
+		animatedEntityRenderer.setClipPlane(clipPlane);
+		animatedEntityRenderer.render(animatedEntities);
+		
 		terrianRenderer.setClipPlane(clipPlane);
 		terrianRenderer.render();
 
@@ -118,7 +131,7 @@ public class MasterRenderer {
 	public void render2d(){
 		guiRenderer.render(guis);
 		guis.clear();
-		
+
 		TextMaster.render();
 	}
 
@@ -135,15 +148,16 @@ public class MasterRenderer {
 			WaterTile tile = waters.get(i);
 			WaterFrameBuffers waterFBOs = WaterRenderer.getInstance().getWaterFBOs().get(i);
 
-			waterFBOs.bindReflectionFrameBuffer();
-			float distance = 2 * (camera.getPosition().y - tile.getPosition().getY());
-			camera.getPosition().y -= distance;
-			camera.invertPitch();
-			reuseable4f.set(0, 1, 0, -tile.getPosition().getY()+1f);
-			render3d(reuseable4f);
-			camera.getPosition().y += distance;
-			camera.invertPitch();
-
+			if(GameSettings.USEWATERREFLECTIONS){
+				waterFBOs.bindReflectionFrameBuffer();
+				float distance = 2 * (camera.getPosition().y - tile.getPosition().getY());
+				camera.getPosition().y -= distance;
+				camera.invertPitch();
+				reuseable4f.set(0, 1, 0, -tile.getPosition().getY()+1f);
+				render3d(reuseable4f);
+				camera.getPosition().y += distance;
+				camera.invertPitch();
+			}
 
 			waterFBOs.bindRefractionFrameBuffer();
 			reuseable4f.set(0, -1, 0, tile.getPosition().getY()+1f);
@@ -152,7 +166,7 @@ public class MasterRenderer {
 		}
 		GL11.glDisable(GL30.GL_CLIP_DISTANCE0);
 	}
-	
+
 
 	public Vector3f getSkyColor() {
 		return skyColor;
@@ -170,7 +184,7 @@ public class MasterRenderer {
 		return lights;
 	}
 
-	public void processPlayer(Player player){
+	/*public void processPlayer(Player player){
 		try{
 			PlayerAsset playerAsset = player.getAsset();
 			TexturedModel entityModel = new TexturedModel(playerAsset.getModel(), playerAsset.getTexture());
@@ -186,7 +200,7 @@ public class MasterRenderer {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	/*public void processEntity(Entity entity){
 		TexturedModel entityModel = entity.getModel();
@@ -220,6 +234,24 @@ public class MasterRenderer {
 				newBatch.add(object);
 				worldObjects.put(object.getName(), newBatch);
 			}
+		}
+	}
+
+	public void processAnimatedWorldObject(AnimatedWorldObject object){
+		if(object == null || object.getAsset() == null || object.getAsset().getModel() == null) return;
+
+
+		//StaticWorldObjectAsset objectAsset = object.getAsset();
+		//TexturedModel entityModel = new TexturedModel(objectAsset.getModel(), objectAsset.getTexture());
+
+		List<AnimatedWorldObject> batch = animatedWorldObjects.get(object.getName());
+
+		if(batch != null){
+			batch.add(object);
+		}else{
+			List<AnimatedWorldObject> newBatch = new ArrayList<AnimatedWorldObject>();
+			newBatch.add(object);
+			animatedWorldObjects.put(object.getName(), newBatch);
 		}
 	}
 
@@ -259,5 +291,23 @@ public class MasterRenderer {
 
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
+	}
+
+	public void processAnimatedEntity(AnimatedPlayer entity) {
+		if(entity == null || entity.getAsset() == null || entity.getAsset().getModel() == null) return;
+
+
+		//StaticWorldObjectAsset objectAsset = object.getAsset();
+		//TexturedModel entityModel = new TexturedModel(objectAsset.getModel(), objectAsset.getTexture());
+
+		List<AnimatedEntity> batch = animatedEntities.get(entity.getName());
+
+		if(batch != null){
+			batch.add(entity);
+		}else{
+			List<AnimatedEntity> newBatch = new ArrayList<AnimatedEntity>();
+			newBatch.add(entity);
+			animatedEntities.put(entity.getName(), newBatch);
+		}
 	}
 }

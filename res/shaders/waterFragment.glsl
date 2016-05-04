@@ -67,7 +67,7 @@ void main(void) {
 	vec3 specularHighlights = lightColour * specular * reflectivity * clamp(waterDepth / 5, 0.0, 1.0);
 	
 	out_Color = mix(reflectColour, refractColour, refractionFactor);
-	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 0.3), 0.2) + vec4(specularHighlights,0.0);
+	out_Color = mix(out_Color, vec4(0.0, 0.3, 0.5, 0.05), 0.1) + vec4(specularHighlights,0.0);
 	out_Color.a = clamp(waterDepth / 5.0, 0.0, 1.0);
 	out_Color = mix(vec4(skyColour,1.0),out_Color,visibility);
 

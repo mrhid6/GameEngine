@@ -11,7 +11,6 @@ import com.mrhid6.render.renderer.FontRenderer;
 import com.mrhid6.settings.Constants;
 import com.mrhid6.settings.GameSettings;
 import com.mrhid6.utils.Loader;
-import com.mrhid6.utils.Maths;
 
 public class TextMaster {
 
@@ -26,7 +25,7 @@ public class TextMaster {
 
 		TextMaster.ARIAL = new FontType(Loader.getInstance().loadTexture("/textures/arial.png"), "/textures/arial.fnt");
 
-		GUIText text = new GUIText(Constants.TITLE+" Alpha v"+GameSettings.CURRENTVERSION.displayVersion(), 0.75f, TextMaster.ARIAL, new Vector2f(Constants.WIDTH-160f, Constants.HEIGHT-22f), 0.3f, false);
+		GUIText text = new GUIText(Constants.TITLE+" Alpha v"+GameSettings.CURRENTVERSION.displayVersion(), 24f, TextMaster.ARIAL, new Vector2f(Constants.WIDTH-180f, Constants.HEIGHT-50f), 0.3f, false);
 		text.setColour(1, 0, 0);
 	}
 

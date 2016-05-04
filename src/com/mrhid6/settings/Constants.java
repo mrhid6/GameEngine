@@ -5,8 +5,8 @@ import java.io.File;
 public final class Constants {
 	
 	// Game Screen Size
-	public static final int WIDTH = 1360;
-	public static final int HEIGHT = 768;
+	public static final int WIDTH = 1920;
+	public static final int HEIGHT = 1080;
 	
 	public static final int FPS_CAP = 120;
 	public static final String TITLE = "Irontide";

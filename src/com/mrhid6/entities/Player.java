@@ -3,13 +3,20 @@ package com.mrhid6.entities;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.mrhid6.asset.AnimatedAsset;
 import com.mrhid6.asset.AssetLoader;
-import com.mrhid6.asset.PlayerAsset;
+import com.mrhid6.models.AnimatedModel;
+import com.mrhid6.models.RawModel;
 import com.mrhid6.render.DisplayManager;
+import com.mrhid6.render.ModelData;
+import com.mrhid6.render.armature.Armature;
 import com.mrhid6.terrians.Terrain;
 import com.mrhid6.terrians.TerrainGrid;
+import com.mrhid6.textures.ModelTexture;
+import com.mrhid6.utils.Loader;
+import com.mrhid6.utils.loaders.ModelDataFileLoader;
 
-public class Player extends Entity{
+public class Player extends AnimatedPlayer{
 	
 	private static final float RUN_SPEED = 30;
 	private static final float SPRINT_SPEED = 80;
@@ -24,27 +31,32 @@ public class Player extends Entity{
 	
 	private boolean inAir = false;
 	
-	private PlayerAsset asset;
-	
-	public Player( Vector3f position, float rotX, float rotY, float rotZ, float scale) {
-		super(position, rotX, rotY, rotZ, scale);
+	public Player( Vector3f position, float rotX, float rotY, float rotZ) {
+		super("PLAYER",position, rotX, rotY, rotZ, 5.5f);
 		
-		AssetLoader.loadAsset("player");
-		asset = (PlayerAsset) AssetLoader.getAsset("player");
+		ModelData playerData = ModelDataFileLoader.loadMdatFromFile("/textures/testCharacter.mdat");
+
+		RawModel playerModel = Loader.getInstance().loadToVAO(playerData.getVertices(), playerData.getTextureCoords(), playerData.getNormals(), playerData.getIndices(), playerData.getBoneIDs(), playerData.getBoneWeights());
+		ModelTexture playerTexture = Loader.getInstance().createModelTexture("/textures/white.png");
+		playerTexture.setUseFakeLighting(false);
+		playerTexture.setHasTransparency(false);
+		AnimatedModel texturedPlayer = new AnimatedModel(playerModel, playerTexture, playerData.getArmature());
 		
-	}
-	
-	public PlayerAsset getAsset() {
-		return asset;
-	}
-	
-	public void setAsset(PlayerAsset playerAsset) {
-		this.asset = playerAsset;
+		AnimatedAsset asset = new AnimatedAsset("PLAYER");
+		asset.setModel(texturedPlayer);
+		Armature armature = playerData.createArmature();
+		asset.setArmature(armature);
+		asset.setAnimations(playerData.createAnimations(armature));
+		AssetLoader.addAsset(asset);
+		
+		this.setAsset(asset);
+		
+		init();
 	}
 	
 	public void move(){
 		checkInputs();
-		
+		update();
 		super.increaseRotation(0, this.currentTurnSpeed * DisplayManager.getFrameTimeSecond(), 0);
 		
 		float distance = currentSpeed* DisplayManager.getFrameTimeSecond();
@@ -88,12 +100,16 @@ public class Player extends Entity{
 		this.hasMoved = false;
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)){
 			this.hasMoved = true;
+			setCurrentAction(RUNNING);
 			this.currentSpeed = (RUN_SPEED + speedMultiplier);
 		}else if(Keyboard.isKeyDown(Keyboard.KEY_S)){
 			this.hasMoved = true;
 			this.currentSpeed = -(RUN_SPEED + speedMultiplier);
 		}else{
-			this.currentSpeed = 0;
+			if(!inAir){
+				setCurrentAction(IDLE);
+				this.currentSpeed = 0;
+			}
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_D)){
@@ -107,6 +123,7 @@ public class Player extends Entity{
 		}
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+			setCurrentAction(2);
 			this.hasMoved = true;
 			jump();
 		}

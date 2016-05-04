@@ -4,6 +4,7 @@ public class MouseToolManager {
 	
 	public static MouseTool STANDARD_MOUSE = new StandardMouseTool();
 	public static MouseTool BRUSH_MOUSE = new BrushMouseTool();
+	public static MouseTool LEVEL_MOUSE = new LevelBrushTool();
 	
 	private MouseTool currentTool = STANDARD_MOUSE;
 

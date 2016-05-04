@@ -23,7 +23,6 @@ import com.mrhid6.skill.Skill;
 import com.mrhid6.terrians.TerrainGrid;
 import com.mrhid6.utils.Loader;
 import com.mrhid6.utils.MousePicker;
-import com.mrhid6.water.WaterTile;
 import com.mrhid6.world.World;
 import com.mrhid6io.utils.Input;
 
@@ -104,8 +103,6 @@ public class GameEngine {
 		return true;
 	}
 
-
-
 	private void createDisplay(){
 		DisplayManager.createDisplay();
 	}
@@ -114,11 +111,11 @@ public class GameEngine {
 	// ################################ Temporary Asset Loading ################################
 	private void loadAssets(){
 
-		renderer.addLight(new Light(new Vector3f(400, 30, 50), new Vector3f(10, 0, 0), new Vector3f(1, 0.01F, 0.009F)));
-		renderer.addLight(new Light(new Vector3f(200, 10, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
-
-		waterRenderer.processWater(new WaterTile(new Vector3f(25, 76, 15), new Vector3f(50,50,50)));
-		waterRenderer.processWater(new WaterTile(new Vector3f(354, 68, 0), new Vector3f(65,65,65)));
+		renderer.addLight(new Light(new Vector3f(400, 80, 50), new Vector3f(10, 0, 0), new Vector3f(1, 0.01F, 0.009F)));
+		renderer.addLight(new Light(new Vector3f(200, 80, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
+		renderer.addLight(new Light(new Vector3f(300, 80, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
+		renderer.addLight(new Light(new Vector3f(200, 80, 300), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
+		renderer.addLight(new Light(new Vector3f(280, 80, 200), new Vector3f(0, 0, 10), new Vector3f(1, 0.01F, 0.002F)));
 
 	}
 	// ################################ END ################################
@@ -164,6 +161,9 @@ public class GameEngine {
 		}
 		if (Input.getKeyUp(Input.KEY_2)){
 			mouseManager.setCurrentTool(MouseToolManager.BRUSH_MOUSE);
+		}
+		if (Input.getKeyUp(Input.KEY_3)){
+			mouseManager.setCurrentTool(MouseToolManager.LEVEL_MOUSE);
 		}
 
 		mouseManager.update();

@@ -17,7 +17,7 @@ public class GuiDebug {
 
 	private int count = -1;
 	
-	private final float LINEHEIGHT = 14.0f;
+	private final float LINEHEIGHT = 18.0f;
 	private final float DEBUGTOP = 120.0f;
 
 	private int positionTextID;
@@ -37,7 +37,7 @@ public class GuiDebug {
 		float x = 5.0f;
 		float y = DEBUGTOP - (count * LINEHEIGHT);
 		
-		GUIText temp = new GUIText(text, 0.75f, TextMaster.ARIAL, new Vector2f(x, Constants.HEIGHT-y), 0.3f, false);
+		GUIText temp = new GUIText(text, 24f, TextMaster.ARIAL, new Vector2f(x, Constants.HEIGHT-y), 0.3f, false);
 		texts.add(temp);
 		count++;
 		return count;

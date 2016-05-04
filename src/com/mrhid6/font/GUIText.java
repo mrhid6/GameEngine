@@ -56,9 +56,8 @@ public class GUIText {
 	public GUIText(String text, float fontSize, FontType font, Vector2f position, float maxLineLength,
 			boolean centered) {
 		this.textString = text;
-		this.fontSize = fontSize;
+		this.fontSize = fontSize*fontSize / (float) Constants.HEIGHT;
 		this.font = font;
-		
 		float screenWidth = (float) Constants.WIDTH;
 		float screenHeight = (float) Constants.HEIGHT;
 		

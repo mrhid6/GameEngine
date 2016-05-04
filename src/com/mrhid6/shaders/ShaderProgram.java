@@ -17,7 +17,10 @@ import org.lwjgl.util.vector.Vector4f;
 import com.mrhid6.log.Logger;
 
 public abstract class ShaderProgram {
-
+	
+	protected static final int MAX_LIGHTS = 4;
+	protected static final int MAX_BONES = 50;
+	
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;

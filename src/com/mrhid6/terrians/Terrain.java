@@ -50,6 +50,7 @@ public class Terrain implements ICleanUpable{
 	private Vector3f reuseableV3f = new Vector3f();
 	private Vector3f reuseableV3f_2 = new Vector3f();
 	private Vector3f reuseableV3f_3 = new Vector3f();
+	private String terrainURL;
 
 	public Terrain(String chunkFile){
 		loadTerrainConfig(chunkFile);
@@ -69,7 +70,7 @@ public class Terrain implements ICleanUpable{
 			this.gridZ = jsonfile.getInt("gridZ");
 
 			String areaURL = WorldArea.getAreaURL(areaid);
-			String terrainURL = areaURL+"/"+this.gridX+"_"+this.gridZ;
+			this.terrainURL = areaURL+"/"+this.gridX+"_"+this.gridZ;
 
 			String str_texture_base  = areaURL+"/"+jsonfile.getString("texture.base");
 			String str_texture_red 	 = areaURL+"/"+jsonfile.getString("texture.red");
@@ -101,6 +102,14 @@ public class Terrain implements ICleanUpable{
 
 	public float getZ() {
 		return z;
+	}
+	
+	public int getGridX() {
+		return gridX;
+	}
+	
+	public int getGridZ() {
+		return gridZ;
 	}
 
 	public TerrainModel getModel() {
@@ -243,6 +252,53 @@ public class Terrain implements ICleanUpable{
 			}
 		}
 	}
+	
+	
+	public void restitchTerrain(){
+		int VERTEX_COUNT = heights.length;
+
+		for(int i=0;i<VERTEX_COUNT;i++){
+			for(int j=0;j<VERTEX_COUNT;j++){
+				
+				if(i==0 || i==VERTEX_COUNT-1 || j==0 || j==VERTEX_COUNT-1){
+
+					//x edge
+					if(j==0){
+						Terrain leftTerrain = TerrainGrid.getInstance().getTerrian(this.x-1, this.z);
+						if(leftTerrain!=null){
+							float testHeight[][] = leftTerrain.getHeights();
+							float prevHeight = heights[j][i];
+							heights[j][i]=(prevHeight + testHeight[VERTEX_COUNT-1][i])/2.0f;
+						}
+					}else if(j==VERTEX_COUNT-1){
+						Terrain rightTerrain = TerrainGrid.getInstance().getTerrian(this.x+SIZE+1, this.z);
+						if(rightTerrain!=null){
+							float testHeight[][] = rightTerrain.getHeights();
+							float prevHeight = heights[j][i];
+							heights[j][i]=(prevHeight + testHeight[0][i])/2.0f;
+						}
+					}
+
+					if(i==0){
+						Terrain topTerrain = TerrainGrid.getInstance().getTerrian(this.x, this.z-1);
+						if(topTerrain!=null){
+							float testHeight[][] = topTerrain.getHeights();
+							float prevHeight = heights[j][i];
+							heights[j][i]=(prevHeight + testHeight[j][VERTEX_COUNT-1])/2.0f;
+						}
+					}else if(i==VERTEX_COUNT-1){
+						Terrain bottomTerrain = TerrainGrid.getInstance().getTerrian(this.x, this.z+SIZE+1);
+						if(bottomTerrain!=null){
+							float testHeight[][] = bottomTerrain.getHeights();
+							float prevHeight = heights[j][i];
+							heights[j][i]=(prevHeight + testHeight[j][0])/2.0f;
+						}
+					}
+
+				}
+			}
+		}
+	}
 
 	public void generateTerrain(){
 
@@ -266,6 +322,8 @@ public class Terrain implements ICleanUpable{
 			for(int i=0;i<indices.length;i++){
 				indices[i] = 0;
 			}
+			
+			restitchTerrain();
 		}
 		
 		
@@ -331,7 +389,8 @@ public class Terrain implements ICleanUpable{
 					testHeight = leftTerrain.getHeights();
 					heightL=testHeight[imageSize-1][z];
 				}
-			}else if(x==imageSize-1){
+			}
+			if(x==imageSize-1){
 				Terrain rightTerrain = TerrainGrid.getInstance().getTerrian(this.x+SIZE+1, this.z);
 				if(rightTerrain!=null){
 					testHeight = rightTerrain.getHeights();
@@ -345,7 +404,8 @@ public class Terrain implements ICleanUpable{
 					testHeight = topTerrain.getHeights();
 					heightD=testHeight[x][imageSize-1];
 				}
-			}else if(z==imageSize-1){
+			}
+			if(z==imageSize-1){
 				Terrain bottomTerrain = TerrainGrid.getInstance().getTerrian(this.x, this.z+SIZE+1);
 				if(bottomTerrain!=null){
 					testHeight = bottomTerrain.getHeights();
@@ -420,7 +480,7 @@ public class Terrain implements ICleanUpable{
 			BufferedImage img = new BufferedImage( 
 					heights.length, heights.length, BufferedImage.TYPE_INT_RGB );
 
-			File f = new File("res/TempImage.png");
+			File f = new File(this.heightMap);
 
 			for(int i=0;i<heights.length;i++){
 				for(int j=0;j<heights.length;j++){

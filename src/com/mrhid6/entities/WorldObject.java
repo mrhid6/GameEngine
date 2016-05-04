@@ -108,7 +108,6 @@ public class WorldObject {
 	public void updateDistanceAlpha(float distance){
 		float diff = getRenderDistance() / distance;
 		float sinkAmount = asset.getHeight() * Maths.clampf(diff, 0.0f, 1.0f);
-		System.out.println(sinkAmount);
 		position.y = sinkAmount;
 	}
 	

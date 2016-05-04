@@ -13,7 +13,8 @@ public class GameSettings {
 	public static String PROGRAMDATADIR = "";
 	public static String INSTALLDIR = "";
 	
-	public static boolean USEGROUNDCLUTTER = false;
+	public static final boolean USEGROUNDCLUTTER = false;
+	public static final boolean USEWATERREFLECTIONS = true;
 	
 	public static GameVersion CURRENTVERSION = new GameVersion("0.0.0");
 	

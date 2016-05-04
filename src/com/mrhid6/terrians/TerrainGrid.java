@@ -35,13 +35,42 @@ public class TerrainGrid implements ICleanUpable{
 		
 		for(int i=0;i<terrians.size();i++){
 			Terrain t = terrians.get(i);
+			boolean xMatch = false;
+			boolean zMatch = false;
 			
-			if( x>=t.getX() && x<t.getX()+Terrain.SIZE && z>=t.getZ() && z<t.getZ()+Terrain.SIZE){
-				return t;
+			if( x>=t.getX() && x<(t.getX()+Terrain.SIZE)){
+				xMatch = true;
 			}
+			if( z>=t.getZ() && z<(t.getZ()+Terrain.SIZE)){
+				zMatch = true;
+			}
+			
+			if(xMatch && zMatch){
+				//System.out.println("Match x:"+x+", z:"+z);
+				return t;
+			}else{
+				//System.out.println("id:"+i+",xmatch:"+xMatch+",zmatch:"+zMatch);
+				//System.out.println("z:"+z+"tz:"+t.getZ());
+			}
+			
 		}
 		
 		return null;
+	}
+	
+	public float getHeight(float x, float z){
+		Terrain t = getTerrian(x, z);
+		
+		if(t != null){
+			int intX = (int)((x-t.getX())/2);
+			int intZ = (int)((z-t.getZ())/2);
+			
+			float[][] heights = t.getHeights();
+			
+			return heights[intX][intZ];
+		}
+		
+		return 0;
 	}
 	
 	public void saveAllTerrains(){

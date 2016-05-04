@@ -32,6 +32,10 @@ public class Entity {
 		this.rotX += dx;
 		this.rotY += dy;
 		this.rotZ += dz;
+		
+		this.rotX = rotX%360;
+		this.rotY = rotY%360;
+		this.rotZ = rotZ%360;
 	}
 
 	public Vector3f getPosition() {

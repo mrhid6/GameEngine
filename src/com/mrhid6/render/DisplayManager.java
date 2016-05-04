@@ -13,23 +13,38 @@ import com.mrhid6.settings.Constants;
 import com.mrhid6.settings.GameSettings;
 
 public class DisplayManager {
-	
+
 	private static long lastFrameTime;
 	private static float delta;
 
 	public static void createDisplay(){
-		
+
 		ContextAttribs attribs = new ContextAttribs(3,2).withForwardCompatible(true).withProfileCore(true);
-		
+
 		try {
-			Display.setDisplayMode(new DisplayMode(Constants.WIDTH, Constants.HEIGHT));
+			DisplayMode displayMode = null;
+			DisplayMode[] modes = Display.getAvailableDisplayModes();
+
+			for (int i = 0; i < modes.length; i++)
+			{
+				if (modes[i].getWidth() == Constants.WIDTH
+						&& modes[i].getHeight() == Constants.HEIGHT
+						&& modes[i].isFullscreenCapable())
+				{
+					displayMode = modes[i];
+				}
+			}
+			Display.setDisplayMode(displayMode);
+			Display.setFullscreen(true);
 			Display.create(new PixelFormat(4,4,4,4), attribs);
 			Display.setTitle(Constants.TITLE + " Alpha v"+GameSettings.CURRENTVERSION.displayVersion());
+
+			
 			Logger.info("Display Created");
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
-		
+
 		GL11.glViewport(0, 0, Constants.WIDTH, Constants.HEIGHT);
 		lastFrameTime = getCurrentTime();
 	}
@@ -37,13 +52,13 @@ public class DisplayManager {
 		return delta;
 	}
 	public static void updateDisplay(){
-		
+
 		Display.sync(Constants.FPS_CAP);
 		Display.update();
 		long currentFrameTime = getCurrentTime();
 		delta = (currentFrameTime - lastFrameTime)/1000f;
 		lastFrameTime = currentFrameTime;
-		
+
 		//System.out.println(1f/delta);
 	}
 
@@ -51,7 +66,7 @@ public class DisplayManager {
 		Display.destroy();
 		Logger.info("Display Destroyed");
 	}
-	
+
 	private static long getCurrentTime(){
 		return Sys.getTime()*1000/Sys.getTimerResolution();
 	}

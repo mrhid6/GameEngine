@@ -45,6 +45,7 @@ public class Launcher {
 	
 	public void openLauncherGUI(){
 		try {
+			GameSettings.loadCurrentVersionNumber();
 			gui = new LauncherGUI();
 		} catch (Exception e) {
 			e.printStackTrace();

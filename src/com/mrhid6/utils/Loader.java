@@ -25,9 +25,11 @@ import org.lwjgl.opengl.GL30;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
+import com.mrhid6.log.Logger;
 import com.mrhid6.models.RawModel;
 import com.mrhid6.render.ModelData;
 import com.mrhid6.settings.GameSettings;
+import com.mrhid6.textures.ModelTexture;
 import com.mrhid6.textures.TextureData;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -87,6 +89,14 @@ public class Loader {
 
 		return loadJSONFR(JSONFile);
 	}
+	
+	public RawModel loadToVAO(float[] positions, int[] indices) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		unbindVAO();
+		return new RawModel(vaoID, indices.length);
+	}
 
 	public void loadToVAO(int vaoID, float[] positions, float[] textureCoords, float[] normals, int[] indices){
 
@@ -145,6 +155,18 @@ public class Loader {
 	public RawModel loadToVAO(ModelData data){
 		return loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 	}
+	
+	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices, float[] boneIDs, float[] boneWeights) {
+		int vaoID = createVAO();
+		bindIndicesBuffer(indices);
+		storeDataInAttributeList(0, 3, positions);
+		storeDataInAttributeList(1, 2, textureCoords);
+		storeDataInAttributeList(2, 3, normals);
+		storeDataInAttributeList(3, 4, boneIDs);
+		storeDataInAttributeList(4, 4, boneWeights);
+		unbindVAO();
+		return new RawModel(vaoID, indices.length);
+	}
 
 	public RawModel loadObjAsset(InputStream in){
 		ModelData data = OBJFileLoader.loadOBJ(in);
@@ -180,6 +202,10 @@ public class Loader {
 		return false;
 	}
 
+	public ModelTexture createModelTexture(String fileName) {
+		return new ModelTexture(loadTexture(fileName));
+	}
+	
 	/**
 	 * 
 	 * @param fileName - Texture File Location
@@ -192,7 +218,7 @@ public class Loader {
 		}
 
 		if(textures.containsKey(fileName)){
-			System.out.println("using cached texture: "+fileName);
+			Logger.info("using cached texture: "+fileName);
 			return textures.get(fileName);
 		}else{
 			InputStream in = null;
@@ -209,7 +235,7 @@ public class Loader {
 
 	public int loadTexture(String identifier, InputStream in){
 		if(textures.containsKey(identifier)){
-			System.out.println("using cached texture: "+identifier);
+			Logger.info("using cached texture: "+identifier);
 			return textures.get(identifier);
 		}else{
 			Texture texture = null;
