@@ -25,6 +25,7 @@ import com.mrhid6.irontide.world.WorldArea;
 public class Terrain implements ICleanUpable{
 
 	public static final float SIZE = 256;
+	public static final float HM_SCALE=2;
 	public static final float  MAX_HEIGHT = 60;
 	private static final float MAX_PIXLE_COLOUR = 256;
 
@@ -209,12 +210,11 @@ public class Terrain implements ICleanUpable{
 		int VERTEX_COUNT = image.getHeight();
 
 		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
-
 		for(int i=0;i<VERTEX_COUNT;i++){
 			for(int j=0;j<VERTEX_COUNT;j++){
 
 				float height = getHeightImage(j, i, image);
-				if(i==0 || i==VERTEX_COUNT-1 || j==0 || j==VERTEX_COUNT-1){
+				/*if(i==0 || i==VERTEX_COUNT-1 || j==0 || j==VERTEX_COUNT-1){
 
 					//x edge
 					if(j==0){
@@ -245,7 +245,7 @@ public class Terrain implements ICleanUpable{
 						}
 					}
 
-				}
+				}*/
 
 				heights[j][i] = height;
 

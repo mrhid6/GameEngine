@@ -39,7 +39,7 @@ public class BrushMouseTool extends MouseTool {
 		}
 
 		if(Mouse.isButtonDown(2)){
-			smoothTerrain(0.1f, raduis/3);
+			smoothTerrain(raduis);
 		}
 	}
 
@@ -57,8 +57,8 @@ public class BrushMouseTool extends MouseTool {
 				for(int j=-raduis;j<=raduis;j++){
 					if(Math.sqrt(i * i + j * j)<=raduis){
 						
-						float x = terrainPoint.x + (i);
-						float z = terrainPoint.z + (j);
+						float x = terrainPoint.x + (i * 2);
+						float z = terrainPoint.z + (j * 2);
 						
 						Terrain t = TerrainGrid.getInstance().getTerrian(x, z);
 						if( t != null){
@@ -66,10 +66,10 @@ public class BrushMouseTool extends MouseTool {
 							float relX = x - t.getX();
 							float relZ = z - t.getZ();
 							
-							int intX = (int) relX ;
-							int intZ = (int) relZ ;
+							int intX = (int) relX /2;
+							int intZ = (int) relZ /2;
 							
-							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE) && intZ<(Terrain.SIZE)){
+							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE/Terrain.HM_SCALE) && intZ<(Terrain.SIZE/Terrain.HM_SCALE)){
 								
 								float[][] heights = t.getHeights();
 								
@@ -84,6 +84,8 @@ public class BrushMouseTool extends MouseTool {
 								
 								t.setHeights(heights);
 								generateNeeded = true;
+							}else{
+								System.out.println(intX+","+intZ);
 							}
 							
 						}
@@ -99,7 +101,7 @@ public class BrushMouseTool extends MouseTool {
 		}
 	}
 
-	private void smoothTerrain(float amount, int raduis){
+	private void smoothTerrain(int raduis){
 		MousePicker picker = GameEngine.getInstance().getPicker();
 		TerrainGrid tg = TerrainGrid.getInstance();
 		
@@ -113,8 +115,8 @@ public class BrushMouseTool extends MouseTool {
 				for(int j=-raduis;j<=raduis;j++){
 					if(Math.sqrt(i * i + j * j)<=raduis){
 						
-						float x = terrainPoint.x + (i);
-						float z = terrainPoint.z + (j);
+						float x = terrainPoint.x + (i * 2);
+						float z = terrainPoint.z + (j * 2);
 						
 						
 						float heightTM = tg.getHeight(x-2, z);
@@ -132,12 +134,12 @@ public class BrushMouseTool extends MouseTool {
 							float relX = x - t.getX();
 							float relZ = z - t.getZ();
 							
-							int intX = (int) relX ;
-							int intZ = (int) relZ ;
+							int intX = (int) relX / 2;
+							int intZ = (int) relZ / 2;
 							
-							System.out.println("x:"+intX+", z:"+intZ);
+							//System.out.println("x:"+intX+", z:"+intZ);
 							
-							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE) && intZ<(Terrain.SIZE)){
+							if(intX>=0 && intZ>=0 && intX<(Terrain.SIZE / 2) && intZ<(Terrain.SIZE / 2)){
 								float[][] heights = t.getHeights();
 						
 								heights[intX][intZ]=Maths.clampf(average, 0, Terrain.MAX_HEIGHT*2);
